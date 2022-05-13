@@ -10,21 +10,31 @@
 		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
-		<div id="panel">
-			<form id="filters">
-				<div class="container">
-					<h5>Size: </h5>
-					<select name="size-filter" id="size-filter">
-						<!-- <input placeholder="Job" type="text" name="job" /> -->
-						<option value="unique-posters">Unique Posters</option>
-						<option value="unique-commenters">Unique Commentors</option>
-					</select>
-					<!-- <input placeholder="Name" type="text" name="Name" />
-					<input placeholder="Job" type="text" name="job" />
-					<input type="submit" />  -->
-				</div> 
-				<!-- <span class="container"></span>  -->
-			</form>
+		<div>
+			<canvas id="c"></canvas>
+
+			<div id="panel">
+				<form id="filters">
+					<div class="container">
+						<h5>Size: </h5>
+						<select name="size-filter" id="size-filter">
+							<!-- <input placeholder="Job" type="text" name="job" /> -->
+							<option value="N_distinct_posters">Unique Posters</option>
+							<option value="N_distinct_commenters">Unique Commentors</option>
+							<option value="mean_comment_length">Mean Comment Length</option>
+							<option value="N_deleted_posts">Deleted Posts</option>
+							<!-- <option value="N_distinct_commenters">Mean Comment Length (log)</option> -->
+							<!-- <option value="N_distinct_commenters">Mean Post Length</option> -->
+							<!-- <option value="N_distinct_commenters">Mean Post Length (log) </option> -->
+							<!-- <option value="N_distinct_commenters">Interactions (comments/posts)</option> -->
+						</select>
+						<!-- <input placeholder="Name" type="text" name="Name" />
+						<input placeholder="Job" type="text" name="job" />
+						<input type="submit" />  -->
+					</div> 
+					<!-- <span class="container"></span>  -->
+				</form>
+			</div>
 		</div>
 
 		<!-- <script type="text/javascript" src="term_tsne_3000.json"></script> -->

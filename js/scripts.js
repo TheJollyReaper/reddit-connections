@@ -9,7 +9,8 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 // if you want to adjust the background color change the hex code here
 scene.background = new THREE.Color( 0xecffa8 );
 
-const renderer = new THREE.WebGLRenderer();
+const canvas = document.querySelector('#c');
+const renderer = new THREE.WebGLRenderer({canvas});
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -18,31 +19,54 @@ var subreddit_attributes = {} ;
 var tsne = null;
 var clusters = null;
 
-$.getJSON("subreddit_attributes.json", function(data) {
-    subreddit_attributes = data
+
+var filters = {}
+var filter_update = new Proxy(filters, {
+    set: function (target, key, value) {
+      console.log(`${key} set to ${value}`);
+      target[key] = value;
+      render_dashboard();
+      return true;
+    }
 })
 
-// fetch the tsne data from the json file
-$.getJSON( "../tsne_10000.json", function( tsne_data ) {
-    // var ts_keys = Object.keys(data);
-    // var ts_data = Object.values(data);
+filter_update.size = 'N_distinct_posters'
 
-    // console.log(data)
-    tsne = tsne_data
+render_dashboard();
 
-    // fetch the cluster data from the json file
-    $.getJSON( "../clusters.json", function( cluster_data ) {
-        // var cluster_keys = Object.keys(cluster_data);
-        // var cluster_values = Object.values(cluster_data);
-
-        // once the data from both files is loaded, start 
-        // creating the subreddit objects. i'm calling the 
-        // function in here to ensure the data gets loaded
-        clusters = Object.values(cluster_data)
-        spawn_discs(tsne, clusters);
-    } )
-
-});
+function render_dashboard() {
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        if(scene.children[i].type === "Mesh")
+            scene.remove(scene.children[i]);
+    }
+    
+    $.getJSON("subreddit_attributes.json", function(data) {
+        subreddit_attributes = data
+    })
+    
+    
+    // fetch the tsne data from the json file
+    $.getJSON( "../tsne_10000.json", function( tsne_data ) {
+        // var ts_keys = Object.keys(data);
+        // var ts_data = Object.values(data);
+    
+        // console.log(data)
+        tsne = tsne_data
+    
+        // fetch the cluster data from the json file
+        $.getJSON( "../clusters.json", function( cluster_data ) {
+            // var cluster_keys = Object.keys(cluster_data);
+            // var cluster_values = Object.values(cluster_data);
+    
+            // once the data from both files is loaded, start 
+            // creating the subreddit objects. i'm calling the 
+            // function in here to ensure the data gets loaded
+            clusters = Object.values(cluster_data)
+            spawn_discs(tsne, clusters);
+        } )
+    
+    });
+}
 
 // spawn subreddit discs
 function spawn_discs(tsne_data, cluster_data) {
@@ -68,13 +92,14 @@ function spawn_discs(tsne_data, cluster_data) {
             // make sure we actually have coordinate data for that subreddit
             if (tsne_data[cluster_data[cluster][subreddit]] && subreddit_attributes[cluster_data[cluster][subreddit]]) {
 
-                // console.log(subreddit_attributes[cluster_data[cluster][subreddit]]['N_distinct_posters'])
+                console.log(subreddit_attributes[cluster_data[cluster][subreddit]][filter_update.size])
                 console.log(cluster_data[cluster])
                 console.log(cluster_data[cluster][subreddit])
                 console.log(tsne_data[cluster_data[cluster][subreddit]]['x'])
                 console.log(tsne_data[cluster_data[cluster][subreddit]]['y'])
-
-                var size = subreddit_attributes[cluster_data[cluster][subreddit]]['N_distinct_posters']
+                
+                // console.log(size_filter);
+                var size = subreddit_attributes[cluster_data[cluster][subreddit]][filter_update.size]
                 // create an object with the given geometry and material we set above
                 var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
                 const disc = new THREE.Mesh( disc_geom, disc_material );
@@ -116,6 +141,7 @@ $(function(){
             // Dynamically create an object
             user[value.name] = value.value;
             console.log(user);
+            filter_update.size = value.value;
         });
     })
 });
@@ -123,7 +149,7 @@ $(function(){
 $("form select").on('change', function () {
     $("form").trigger('submit');
  });
- 
+
 // sets a circle at origin for reference
 const geometry = new THREE.CircleGeometry( 10, 32 );
 var material = new THREE.MeshStandardMaterial( { color: 0xfcba03 })

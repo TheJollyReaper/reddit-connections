@@ -1,7 +1,10 @@
-/* .filters {
+.container {
     position: absolute;
     display: block;
     z-index: 99;
-    left: 60vw;
-    top: 60vh;
-} */
+    left: 1vw;
+    top: 2vh;
+    background-color: rgba(250, 235, 215, 0.605);
+    width: 98vw;
+    border-radius: 20px;
+}
