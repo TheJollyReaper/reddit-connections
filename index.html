@@ -2,15 +2,36 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>My first three.js app</title>
+		<title>Reddit Connections</title>
 		<style>
 			body { margin: 0; }
 		</style>
+
+		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
+		<div id="panel">
+			<form id="filters">
+				<div class="container">
+					<h5>Size: </h5>
+					<select name="size-filter" id="size-filter">
+						<!-- <input placeholder="Job" type="text" name="job" /> -->
+						<option value="unique-posters">Unique Posters</option>
+						<option value="unique-commenters">Unique Commentors</option>
+					</select>
+					<!-- <input placeholder="Name" type="text" name="Name" />
+					<input placeholder="Job" type="text" name="job" />
+					<input type="submit" />  -->
+				</div> 
+				<!-- <span class="container"></span>  -->
+			</form>
+		</div>
+
 		<!-- <script type="text/javascript" src="term_tsne_3000.json"></script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="js/three.js"></script>
+		<!-- <script src="js/canvas.js"></script> -->
+		<!-- <script src="js/screen_code.js"></script> -->
 		<script type="module" src="js/scripts.js"></script>
 	</body>
 </html>

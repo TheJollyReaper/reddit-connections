@@ -14,12 +14,21 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+var subreddit_attributes = {} ;
+var tsne = null;
+var clusters = null;
+
+$.getJSON("subreddit_attributes.json", function(data) {
+    subreddit_attributes = data
+})
+
 // fetch the tsne data from the json file
 $.getJSON( "../tsne_10000.json", function( tsne_data ) {
     // var ts_keys = Object.keys(data);
     // var ts_data = Object.values(data);
 
     // console.log(data)
+    tsne = tsne_data
 
     // fetch the cluster data from the json file
     $.getJSON( "../clusters.json", function( cluster_data ) {
@@ -29,7 +38,8 @@ $.getJSON( "../tsne_10000.json", function( tsne_data ) {
         // once the data from both files is loaded, start 
         // creating the subreddit objects. i'm calling the 
         // function in here to ensure the data gets loaded
-        spawn_discs(tsne_data, Object.values(cluster_data));
+        clusters = Object.values(cluster_data)
+        spawn_discs(tsne, clusters);
     } )
 
 });
@@ -49,20 +59,24 @@ function spawn_discs(tsne_data, cluster_data) {
         // disc material creates the visible mesh, but really the only thing we care
         // about is that it sets the object color. Here i'm multiplying the hexcode
         // for white by a random number to give each cluster group a random color
-        const disc_geom = new THREE.CircleGeometry( 2, 32 );
+        
         var disc_material = new THREE.MeshStandardMaterial( { color: Math.random() * 0xffffff })
         
         // iterate through every subreddit in the current cluster
         for (let subreddit = 0; subreddit < cluster_data[cluster].length; subreddit++) {
-            
+
             // make sure we actually have coordinate data for that subreddit
-            if (tsne_data[cluster_data[cluster][subreddit]]) {
+            if (tsne_data[cluster_data[cluster][subreddit]] && subreddit_attributes[cluster_data[cluster][subreddit]]) {
+
+                // console.log(subreddit_attributes[cluster_data[cluster][subreddit]]['N_distinct_posters'])
                 console.log(cluster_data[cluster])
                 console.log(cluster_data[cluster][subreddit])
                 console.log(tsne_data[cluster_data[cluster][subreddit]]['x'])
                 console.log(tsne_data[cluster_data[cluster][subreddit]]['y'])
 
+                var size = subreddit_attributes[cluster_data[cluster][subreddit]]['N_distinct_posters']
                 // create an object with the given geometry and material we set above
+                var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
                 const disc = new THREE.Mesh( disc_geom, disc_material );
 
                 // set the position of that object to the tsne coordinate units
@@ -85,6 +99,31 @@ function spawn_discs(tsne_data, cluster_data) {
     // }
 }
 
+// function SizeChange(event, inputText) {
+//     event.preventDefault();
+//     console.log("testing")
+// }
+
+$(function(){
+    $('form').on('submit', function(event){
+        event.preventDefault();
+
+        console.log('chicken');
+        let userinfo = $(this).serializeArray();
+        let user = {};
+        userinfo.forEach((value) => {
+              
+            // Dynamically create an object
+            user[value.name] = value.value;
+            console.log(user);
+        });
+    })
+});
+
+$("form select").on('change', function () {
+    $("form").trigger('submit');
+ });
+ 
 // sets a circle at origin for reference
 const geometry = new THREE.CircleGeometry( 10, 32 );
 var material = new THREE.MeshStandardMaterial( { color: 0xfcba03 })
