@@ -31,15 +31,17 @@ var filter_update = new Proxy(filters, {
 })
 
 filter_update.size = 'N_distinct_posters'
+filter_update.color = 'clusters'
 
 render_dashboard();
 
 function render_dashboard() {
+    // Go through all objects in scene, delete all bubbles
     for (let i = scene.children.length - 1; i >= 0; i--) {
         if(scene.children[i].type === "Mesh")
             scene.remove(scene.children[i]);
     }
-    
+
     $.getJSON("subreddit_attributes.json", function(data) {
         subreddit_attributes = data
     })
@@ -83,8 +85,11 @@ function spawn_discs(tsne_data, cluster_data) {
         // disc material creates the visible mesh, but really the only thing we care
         // about is that it sets the object color. Here i'm multiplying the hexcode
         // for white by a random number to give each cluster group a random color
-        
-        var disc_material = new THREE.MeshStandardMaterial( { color: Math.random() * 0xffffff })
+
+        var disc_material = new THREE.MeshStandardMaterial();
+        if (filter_update.color == "clusters") {
+            disc_material = new THREE.MeshStandardMaterial( { color: Math.random() * 0xffffff });
+        }
         
         // iterate through every subreddit in the current cluster
         for (let subreddit = 0; subreddit < cluster_data[cluster].length; subreddit++) {
@@ -102,6 +107,17 @@ function spawn_discs(tsne_data, cluster_data) {
                 var size = subreddit_attributes[cluster_data[cluster][subreddit]][filter_update.size]
                 // create an object with the given geometry and material we set above
                 var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
+                
+                var total_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_posts']
+                if (filter_update.color == "nsfw") {
+                    var nsfw_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_nsfw_posts']
+
+                    var percentage = parseInt((nsfw_posts) / total_posts).toString() + '%';
+                    console.log('total_posts: ' + total_posts);
+                    console.log('nsfw: ' + nsfw_posts);                                                                                    
+                    console.log('percentage ' + percentage);
+                    disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
+                }
                 const disc = new THREE.Mesh( disc_geom, disc_material );
 
                 // set the position of that object to the tsne coordinate units
@@ -130,25 +146,40 @@ function spawn_discs(tsne_data, cluster_data) {
 // }
 
 $(function(){
-    $('form').on('submit', function(event){
+    $('#size-filters').on('submit', function(event){
         event.preventDefault();
-
-        console.log('chicken');
         let userinfo = $(this).serializeArray();
         let user = {};
-        userinfo.forEach((value) => {
-              
+        userinfo.forEach((value) => { 
             // Dynamically create an object
             user[value.name] = value.value;
-            console.log(user);
+            // console.log(user);
             filter_update.size = value.value;
+            console.log(filter_update.size);
+        });
+    })
+
+    $('#color-filters').on('submit', function(event){
+        event.preventDefault();
+        let userinfo = $(this).serializeArray();
+        let user = {};
+        userinfo.forEach((value) => { 
+            // Dynamically create an object
+            user[value.name] = value.value;
+            // console.log(user);
+            filter_update.color = value.value;
+            console.log(filter_update.color);
         });
     })
 });
 
-$("form select").on('change', function () {
-    $("form").trigger('submit');
- });
+$("#size-filters select").on('change', function () {
+    $('#size-filters').trigger('submit');
+});
+
+$("#color-filters select").on('change', function () {
+    $('#color-filters').trigger('submit');
+});
 
 // sets a circle at origin for reference
 const geometry = new THREE.CircleGeometry( 10, 32 );

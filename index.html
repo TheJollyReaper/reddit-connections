@@ -14,7 +14,7 @@
 			<canvas id="c"></canvas>
 
 			<div id="panel">
-				<form id="filters">
+				<form id="size-filters">
 					<div class="container">
 						<h5>Size: </h5>
 						<select name="size-filter" id="size-filter">
@@ -28,17 +28,27 @@
 							<!-- <option value="N_distinct_commenters">Mean Post Length (log) </option> -->
 							<!-- <option value="N_distinct_commenters">Interactions (comments/posts)</option> -->
 						</select>
-						<!-- <input placeholder="Name" type="text" name="Name" />
-						<input placeholder="Job" type="text" name="job" />
-						<input type="submit" />  -->
 					</div> 
-					<!-- <span class="container"></span>  -->
+				</form>
+
+				<form id="color-filters">
+					<div class="container">
+						<h5>Color: </h5>
+						<select name="color-filter" id="color-filter">
+							<!-- <input placeholder="Job" type="text" name="job" /> -->
+							<option value="clusters">Topic Clusters</option>
+							<option value="nsfw">NSFW %</option>
+							<option value="comment_moderation">Comment Moderation %</option>
+							<option value="post_moderation">Post Moderation %</option>
+						</select>
+					</div> 
 				</form>
 			</div>
 		</div>
 
 		<!-- <script type="text/javascript" src="term_tsne_3000.json"></script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 		<script src="js/three.js"></script>
 		<!-- <script src="js/canvas.js"></script> -->
 		<!-- <script src="js/screen_code.js"></script> -->
