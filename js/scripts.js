@@ -109,13 +109,29 @@ function spawn_discs(tsne_data, cluster_data) {
                 var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
                 
                 var total_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_posts']
+                var total_comments = subreddit_attributes[cluster_data[cluster][subreddit]] ['N_comments']
                 if (filter_update.color == "nsfw") {
                     var nsfw_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_nsfw_posts']
 
-                    var percentage = parseInt((nsfw_posts) / total_posts).toString() + '%';
+                    var percentage = parseInt(((nsfw_posts) / total_posts)*100).toString() + '%';
                     console.log('total_posts: ' + total_posts);
                     console.log('nsfw: ' + nsfw_posts);                                                                                    
                     console.log('percentage ' + percentage);
+                    disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
+                } else if (filter_update.color == "comment_mod") {
+                    var comments_deleted = subreddit_attributes[cluster_data[cluster][subreddit]]['N_deleted_comments'];
+
+                    var percentage = parseInt(((comments_deleted) / total_comments)*100).toString() + '%';
+                    
+                    console.log('total_comments: ' + total_comments);
+                    console.log('comments deleted: ' + comments_deleted);                                                                                    
+                    console.log('percentage ' + percentage);
+
+                    disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
+                } else if (filter_update.color == "post_mod") {
+                    var posts_deleted = subreddit_attributes[cluster_data[cluster][subreddit]]['N_deleted_posts'];
+                    var percentage = parseInt(((posts_deleted) / total_posts)*100).toString() + '%';
+
                     disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
                 }
                 const disc = new THREE.Mesh( disc_geom, disc_material );
