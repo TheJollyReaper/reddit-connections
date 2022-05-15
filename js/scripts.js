@@ -5,6 +5,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/exampl
 // and a renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const mmi = new MouseMeshInteraction(scene, camera);
 
 // if you want to adjust the background color change the hex code here
 scene.background = new THREE.Color( 0xecffa8 );
@@ -136,12 +137,18 @@ function spawn_discs(tsne_data, cluster_data) {
                 }
                 const disc = new THREE.Mesh( disc_geom, disc_material );
 
+                disc.name = tsne_data[cluster_data[cluster][subreddit]];
                 // set the position of that object to the tsne coordinate units
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * 20;
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * 20;
                 
                 // add the object to the scene
                 scene.add(disc);
+
+                mmi.addHandler(tsne_data[cluster_data[cluster][subreddit]], 'click', function(mesh) {
+                    console.log('interactable mesh has been clicked!');
+                    alert(mesh.name.name);
+                });
             }
             
             // console.log(cluster_data[cluster][subreddit])
@@ -201,38 +208,20 @@ $("#color-filters select").on('change', function () {
 const geometry = new THREE.CircleGeometry( 10, 32 );
 var material = new THREE.MeshStandardMaterial( { color: 0xfcba03 })
 const cube = new THREE.Mesh( geometry, material );
+cube.name = "TORTILLA";
 cube.position.x = 0;
 cube.position.y = 0;
 scene.add(cube);
 
+
+mmi.addHandler('TORTILLA', 'click', function(mesh) {
+	console.log('interactable mesh has been clicked!');
+	alert(mesh.name + " has been clicked");
+});
+
 // creates global lighting to give every object equal light
 const light = new THREE.AmbientLight( 0x404040, 3 ); // soft white light
 scene.add( light );
-
-// for (let i = 0; i < 100; i += 10) {
-//     const cube = new THREE.Mesh( geometry2, material2 );
-//     cube.position.x = 50.47939682006836;
-//     cube.position.y = i;
-//     scene.add(cube);
-
-//     var pointLight = new THREE.PointLight( 0xffffff, 3 );
-//     pointLight.position.set( 25, 90, 25 );
-//     cube.add( pointLight );
-// }
-
-
-// cube.add(cube2);
-// cube.add(cube3);
-// cube.add(cube4);
-// cube.add(cube5);
-// scene.add( cube );
-// // scene.add( cube2 );
-// cube2.position.x += 4;
-// cube3.position.x -= 8;
-// cube4.position.z += 15;
-
-
-
 
 // camera and orbiting controls
 camera.position.z = 5;
@@ -243,22 +232,12 @@ const controls = new OrbitControls( camera, renderer.domElement );
 camera.position.set( 0, 20, 100 );
 controls.update();
 
-
-
-
 function animate() {
 	requestAnimationFrame( animate );
-    // cube.rotation.x += 0.05;
-    // cube.rotation.y += 0.002;
-
-    // cube2.rotation.x += 0.05;
-
-    // cube2.rotation.x += 0.10;
-    // cube2.rotation.y += 0.10;
-
-    // cube2.rotation.y += .6;
     
 	renderer.render( scene, camera );
+
+    mmi.update();
 
 	// required if controls.enableDamping or controls.autoRotate are set to true
 	controls.update();
