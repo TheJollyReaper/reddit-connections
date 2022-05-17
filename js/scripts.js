@@ -4,7 +4,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/exampl
 // Basic setup, need to create a scene, a camera, a background,
 // and a renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 3000 );
 const mmi = new MouseMeshInteraction(scene, camera);
 
 // if you want to adjust the background color change the hex code here
@@ -141,13 +141,44 @@ function spawn_discs(tsne_data, cluster_data) {
                 // set the position of that object to the tsne coordinate units
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * 20;
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * 20;
-                
+
                 // add the object to the scene
                 scene.add(disc);
 
                 mmi.addHandler(tsne_data[cluster_data[cluster][subreddit]], 'click', function(mesh) {
                     console.log('interactable mesh has been clicked!');
-                    alert(mesh.name.name);
+                    // alert(mesh.position.x);
+                    // mesh.name.name
+                    // alert(mesh.position.x + "," + mesh.position.y + "," + mesh.position.z); 
+                    // camera.position.set(75.76, 27.12, 100);
+                   
+                    camera.position.x = 0;
+                    camera.position.y = 0;
+
+                    scene.position.x = 0;
+                    scene.position.y = 0;
+
+                    scene.translateX(-mesh.position.x)
+                    scene.translateY(-mesh.position.y)
+
+                    // scene.translateX(-(mesh.x - camera.position.x))
+                    // scene.translateX(-(mesh.y - camera.position.y))
+
+                    // camera.position.lerp(mesh.position, 0.03);
+                    // camera.position.y = 10;
+
+
+
+
+                    // camera.lookAt( mesh.name.x, mesh.name.y, 100 );
+
+                    // camera.position.x = mesh.name.x;
+                    // camera.position.y = mesh.name.y;
+
+                    // controls.mesh.copy(object.position);
+                    // controls.update();
+
+                    
                 });
             }
             
@@ -167,6 +198,7 @@ function spawn_discs(tsne_data, cluster_data) {
 //     event.preventDefault();
 //     console.log("testing")
 // }
+
 
 $(function(){
     $('#size-filters').on('submit', function(event){
@@ -217,6 +249,7 @@ scene.add(cube);
 mmi.addHandler('TORTILLA', 'click', function(mesh) {
 	console.log('interactable mesh has been clicked!');
 	alert(mesh.name + " has been clicked");
+    console.log(mesh);
 });
 
 // creates global lighting to give every object equal light
@@ -238,7 +271,8 @@ function animate() {
 	renderer.render( scene, camera );
 
     mmi.update();
-
+    // camera.position.set(0, 20, 100);
+    // console.log(controls.target.distanceTo( controls.object.position ));
 	// required if controls.enableDamping or controls.autoRotate are set to true
 	controls.update();
 
