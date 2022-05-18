@@ -176,7 +176,28 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     
                     
-                    api.getIcon(mesh.name.name).then(value=>{document.getElementById('subreddit-img').src=(value)});
+                    // api.getIcon(mesh.name.name).then(value=>{document.getElementById('subreddit-img').src=(value);
+                    //                                             console.log(value); alert(mesh.name.name)});
+ 
+                    api.getCommImage(mesh.name.name).then(value=>{
+                        document.getElementById('subreddit-img').src=(value);
+                        if (!value) {
+                            api.getIcon(mesh.name.name).then(value=>{
+                                document.getElementById('subreddit-img').src=(value);
+                            })
+                        } 
+                        document.getElementById('subreddit-name').innerHTML= "r/" + mesh.name.name;
+                        // checkImage(value); 
+                    });
+                    
+
+                    // function checkImage(value) {
+                    //     if (value=="") {
+                    //         api.getIcon(mesh.name.name).then(new_value=>{
+                    //             document.getElementById('subreddit-img').src=(new_value);  
+                    //         });
+                    //     }
+                    // }
 
                     for (let i = scene.children.length - 1; i >= 0; i--) {
                         if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
@@ -294,7 +315,7 @@ scene.add(cube);
 
 mmi.addHandler('TORTILLA', 'click', function(mesh) {
 	console.log('interactable mesh has been clicked!');
-	alert(mesh.name + " has been clicked");
+	// alert(mesh.name + " has been clicked");
     console.log(mesh);
     api.getIcon('trees');
     // console.log(api.getIcon('nba'));

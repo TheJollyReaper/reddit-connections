@@ -19,7 +19,15 @@ export class RedditApi {
       return sub_link;
       // return String(this.s.getSubreddit(subreddit).icon_img.then( ));
   }
-  
+
+  getCommImage(subreddit) {
+    // this.s.getSubreddit(subreddit).icon_img.then(value=>{this.returnValues(value)});
+
+    const sub_link = this.s.getSubreddit(subreddit).community_icon;
+    return sub_link;
+    // return String(this.s.getSubreddit(subreddit).icon_img.then( ));
+}
+
   // var sub = 'trees';
 
   // // title
