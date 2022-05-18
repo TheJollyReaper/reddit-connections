@@ -28,6 +28,11 @@ export class RedditApi {
     // return String(this.s.getSubreddit(subreddit).icon_img.then( ));
 }
 
+  getDescription(subreddit) {
+    const description = this.s.getSubreddit(subreddit).public_description;
+    return description;
+  }
+
   // var sub = 'trees';
 
   // // title

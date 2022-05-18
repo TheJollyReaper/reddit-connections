@@ -10,7 +10,7 @@ const mmi = new MouseMeshInteraction(scene, camera);
 
 import { RedditApi } from './reddit-api.js';
 
-var api = new RedditApi()
+var api = new RedditApi();
 // if you want to adjust the background color change the hex code here
 scene.background = new THREE.Color( 0xecffa8 );
 
@@ -179,16 +179,21 @@ function spawn_discs(tsne_data, cluster_data) {
                     // api.getIcon(mesh.name.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name.name)});
  
-                    api.getCommImage(mesh.name.name).then(value=>{
+                    api.getIcon(mesh.name.name).then(value=>{
                         document.getElementById('subreddit-img').src=(value);
                         if (!value) {
-                            api.getIcon(mesh.name.name).then(value=>{
+                            api.getCommImage(mesh.name.name).then(value=>{
                                 document.getElementById('subreddit-img').src=(value);
                             })
                         } 
-                        document.getElementById('subreddit-name').innerHTML= "r/" + mesh.name.name;
-                        // checkImage(value); 
                     });
+
+                    api.getDescription(mesh.name.name).then(value=>{
+                        document.getElementById('description').innerHTML = value;
+                    })
+
+                    document.getElementById('subreddit-name').innerHTML = "r/" + mesh.name.name;
+                    document.getElementById('popup-panels').style.display = 'flex';
                     
 
                     // function checkImage(value) {
@@ -320,6 +325,14 @@ mmi.addHandler('TORTILLA', 'click', function(mesh) {
     api.getIcon('trees');
     // console.log(api.getIcon('nba'));
 });
+
+
+document.getElementById('close').onclick = close_panel;   
+
+function close_panel() {
+    // alert('test')
+    document.getElementById('popup-panels').style.display = 'none';
+}
 
 // creates global lighting to give every object equal light
 const light = new THREE.AmbientLight( 0x404040, 3 ); // soft white light
