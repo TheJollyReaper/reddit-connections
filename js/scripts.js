@@ -150,6 +150,7 @@ function spawn_discs(tsne_data, cluster_data) {
                 // add the object to the scene
                 scene.add(disc);
 
+                // Run this function whenever any bubble is clicked
                 mmi.addHandler(tsne_data[cluster_data[cluster][subreddit]], 'click', function(mesh) {
                     console.log('interactable mesh has been clicked!');
                     // alert(mesh.position.x);
@@ -160,11 +161,13 @@ function spawn_discs(tsne_data, cluster_data) {
                     // camera.position.x = 0;
                     // camera.position.y = 0;
                     // camera.position.z = 0;
+
+                    // Delete old lines
                     for (let i = scene.children.length - 1; i >= 0; i--) {
                         if(scene.children[i].type === "Line")
                             scene.remove(scene.children[i]);
                     }
-                    
+
                     camera.position.set( 0, 20, 100 );
                     controls.update();
 
@@ -174,13 +177,9 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     scene.translateX(-mesh.position.x);
                     scene.translateY(-mesh.position.y);
-                    camera.position.z = 70;
+                    camera.position.z = 150;
                     controls.update();
-                    
-                    var distances = [];
 
-                    
-                    
                     // api.getIcon(mesh.name.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name.name)});
  
@@ -209,27 +208,77 @@ function spawn_discs(tsne_data, cluster_data) {
                     //     }
                     // }
 
+                    var distances = {};
                     for (let i = scene.children.length - 1; i >= 0; i--) {
-                        if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
-                            distances.push({key: scene.children[i], value:getDistance(mesh, scene.children[i])});
-                            console.log(scene.children[i]);
-                            console.log(getDistance(mesh, scene.children[i]));
+                        distances[scene.children[i].name.name] = getDistance(mesh, scene.children[i]);
+                    }
+
+                    // Step - 1
+                    // Create the array of key-value pairs
+                    var items = Object.keys(distances).map(
+                        (key) => { return [key, distances[key]] });
+                    
+                    // Step - 2
+                    // Sort the array based on the second element (i.e. the value)
+                    items.sort(
+                        (first, second) => { return first[1] - second[1] }
+                    );
+                    
+                    // Step - 3
+                    // Obtain the list of keys in sorted order of the values.
+                    var closest_subs = items.map(
+                        (e) => { return e[0] });
+
+                    console.log(closest_subs.slice(0,10));
+
+                    for (let i = scene.children.length - 1; i >= 0; i--) {
+                        if (closest_subs.slice(0,10).includes(scene.children[i].name.name)) {
+                            const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+                            const points = [];
+                            points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
+                            // points.push( new THREE.Vector3( 0, 10, 0 ) );
+                            // console.log(distances[closest_subs[i]]);
+                            points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
                             
-                            if (i < 5) {
-                                const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
-                                const points = [];
-                                points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
-                                // points.push( new THREE.Vector3( 0, 10, 0 ) );
-                                points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
-                                
-                                const geometry = new THREE.BufferGeometry().setFromPoints( points );
-                                const line = new THREE.Line( geometry, material );
-                                scene.add( line );
-                            }
+                            const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                            const line = new THREE.Line( geometry, material );
+                            scene.add( line );
                         }
                     }
 
-                    console.log(distances);
+                    // var distances = new Map();
+
+                    // for (let i = scene.children.length - 1; i >= 0; i--) {
+                    //     if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
+                    //         distances.set(scene.children[i], {'distance': getDistance(mesh, scene.children[i])})
+                    //     }
+                    // }
+
+                    // var sorted_distances = new Map([...distances.entries()].sort((a, b) => a[1]['distance'] > b[1]['distance']));
+                    
+                    // var distances = [];
+
+                    // for (let i = scene.children.length - 1; i >= 0; i--) {
+                    //     if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
+                    //         distances.push({key: scene.children[i], value:getDistance(mesh, scene.children[i])});
+                    //         console.log(scene.children[i]);
+                    //         console.log(getDistance(mesh, scene.children[i]));
+                            
+                    //         if (i < 5) {
+                    //             const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+                    //             const points = [];
+                    //             points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
+                    //             // points.push( new THREE.Vector3( 0, 10, 0 ) );
+                    //             points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
+                                
+                    //             const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                    //             const line = new THREE.Line( geometry, material );
+                    //             scene.add( line );
+                    //         }
+                    //     }
+                    // }
+
+                    // console.log(distances);
                     
                     // scene.translateX(-(mesh.x - camera.position.x))
                     // scene.translateX(-(mesh.y - camera.position.y))
