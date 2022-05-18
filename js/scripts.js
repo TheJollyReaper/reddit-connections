@@ -160,6 +160,11 @@ function spawn_discs(tsne_data, cluster_data) {
                     // camera.position.x = 0;
                     // camera.position.y = 0;
                     // camera.position.z = 0;
+                    for (let i = scene.children.length - 1; i >= 0; i--) {
+                        if(scene.children[i].type === "Line")
+                            scene.remove(scene.children[i]);
+                    }
+                    
                     camera.position.set( 0, 20, 100 );
                     controls.update();
 
