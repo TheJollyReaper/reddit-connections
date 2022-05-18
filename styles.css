@@ -9,3 +9,19 @@
     width: 95vw;
     border-radius: 20px;
 }
+
+#popup-panels {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(250, 235, 215, 0.605);
+    top: 15vh; 
+    left: 1vw;  
+    height: 80vh;
+    width: 15vw;
+    border-radius: 20px;
+}
+
+#subreddit-image {
+    size: 100%;
+}
