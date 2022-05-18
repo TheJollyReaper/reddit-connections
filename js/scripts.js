@@ -6,12 +6,17 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/exampl
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 3000 );
 const mmi = new MouseMeshInteraction(scene, camera);
+// const api = new RedditApi();
 
+import { RedditApi } from './reddit-api.js';
+
+var api = new RedditApi();
 // if you want to adjust the background color change the hex code here
 scene.background = new THREE.Color( 0xecffa8 );
 
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
+
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -139,12 +144,13 @@ function spawn_discs(tsne_data, cluster_data) {
 
                 disc.name = tsne_data[cluster_data[cluster][subreddit]];
                 // set the position of that object to the tsne coordinate units
-                disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * 20;
-                disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * 20;
+                disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * 60;
+                disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * 60;
 
                 // add the object to the scene
                 scene.add(disc);
 
+                // Run this function whenever any bubble is clicked
                 mmi.addHandler(tsne_data[cluster_data[cluster][subreddit]], 'click', function(mesh) {
                     console.log('interactable mesh has been clicked!');
                     // alert(mesh.position.x);
@@ -152,15 +158,128 @@ function spawn_discs(tsne_data, cluster_data) {
                     // alert(mesh.position.x + "," + mesh.position.y + "," + mesh.position.z); 
                     // camera.position.set(75.76, 27.12, 100);
                    
-                    camera.position.x = 0;
-                    camera.position.y = 0;
+                    // camera.position.x = 0;
+                    // camera.position.y = 0;
+                    // camera.position.z = 0;
+
+                    // Delete old lines
+                    for (let i = scene.children.length - 1; i >= 0; i--) {
+                        if(scene.children[i].type === "Line")
+                            scene.remove(scene.children[i]);
+                    }
+
+                    camera.position.set( 0, 20, 100 );
+                    controls.update();
 
                     scene.position.x = 0;
                     scene.position.y = 0;
+                    scene.position.z = 0;
 
-                    scene.translateX(-mesh.position.x)
-                    scene.translateY(-mesh.position.y)
+                    scene.translateX(-mesh.position.x);
+                    scene.translateY(-mesh.position.y);
+                    camera.position.z = 150;
+                    controls.update();
 
+                    // api.getIcon(mesh.name.name).then(value=>{document.getElementById('subreddit-img').src=(value);
+                    //                                             console.log(value); alert(mesh.name.name)});
+ 
+                    api.getIcon(mesh.name.name).then(value=>{
+                        document.getElementById('subreddit-img').src=(value);
+                        if (!value) {
+                            api.getCommImage(mesh.name.name).then(value=>{
+                                document.getElementById('subreddit-img').src=(value);
+                            })
+                        } 
+                    });
+
+                    api.getDescription(mesh.name.name).then(value=>{
+                        document.getElementById('description').innerHTML = value;
+                    })
+
+                    document.getElementById('subreddit-name').innerHTML = "r/" + mesh.name.name;
+                    document.getElementById('popup-panels').style.display = 'flex';
+                    
+
+                    // function checkImage(value) {
+                    //     if (value=="") {
+                    //         api.getIcon(mesh.name.name).then(new_value=>{
+                    //             document.getElementById('subreddit-img').src=(new_value);  
+                    //         });
+                    //     }
+                    // }
+
+                    var distances = {};
+                    for (let i = scene.children.length - 1; i >= 0; i--) {
+                        distances[scene.children[i].name.name] = getDistance(mesh, scene.children[i]);
+                    }
+
+                    // Step - 1
+                    // Create the array of key-value pairs
+                    var items = Object.keys(distances).map(
+                        (key) => { return [key, distances[key]] });
+                    
+                    // Step - 2
+                    // Sort the array based on the second element (i.e. the value)
+                    items.sort(
+                        (first, second) => { return first[1] - second[1] }
+                    );
+                    
+                    // Step - 3
+                    // Obtain the list of keys in sorted order of the values.
+                    var closest_subs = items.map(
+                        (e) => { return e[0] });
+
+                    console.log(closest_subs.slice(0,10));
+
+                    for (let i = scene.children.length - 1; i >= 0; i--) {
+                        if (closest_subs.slice(0,10).includes(scene.children[i].name.name)) {
+                            const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+                            const points = [];
+                            points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
+                            // points.push( new THREE.Vector3( 0, 10, 0 ) );
+                            // console.log(distances[closest_subs[i]]);
+                            points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
+                            
+                            const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                            const line = new THREE.Line( geometry, material );
+                            scene.add( line );
+                        }
+                    }
+
+                    // var distances = new Map();
+
+                    // for (let i = scene.children.length - 1; i >= 0; i--) {
+                    //     if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
+                    //         distances.set(scene.children[i], {'distance': getDistance(mesh, scene.children[i])})
+                    //     }
+                    // }
+
+                    // var sorted_distances = new Map([...distances.entries()].sort((a, b) => a[1]['distance'] > b[1]['distance']));
+                    
+                    // var distances = [];
+
+                    // for (let i = scene.children.length - 1; i >= 0; i--) {
+                    //     if(scene.children[i].type === "Mesh" & getDistance(mesh, scene.children[i]) != 0) {
+                    //         distances.push({key: scene.children[i], value:getDistance(mesh, scene.children[i])});
+                    //         console.log(scene.children[i]);
+                    //         console.log(getDistance(mesh, scene.children[i]));
+                            
+                    //         if (i < 5) {
+                    //             const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+                    //             const points = [];
+                    //             points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
+                    //             // points.push( new THREE.Vector3( 0, 10, 0 ) );
+                    //             points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
+                                
+                    //             const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                    //             const line = new THREE.Line( geometry, material );
+                    //             scene.add( line );
+                    //         }
+                    //     }
+                    // }
+
+                    // console.log(distances);
+                    
                     // scene.translateX(-(mesh.x - camera.position.x))
                     // scene.translateX(-(mesh.y - camera.position.y))
 
@@ -185,7 +304,7 @@ function spawn_discs(tsne_data, cluster_data) {
             // console.log(cluster_data[cluster][subreddit])
         }
     }
-
+    
     // for (let i = 0; i < ts_keys.length; i++) {
     //     const cube = new THREE.Mesh( geometry2, material2 );
     //     cube.position.x = ts_data[i]['x'] * 20;
@@ -199,6 +318,13 @@ function spawn_discs(tsne_data, cluster_data) {
 //     console.log("testing")
 // }
 
+// calculate distance between two bubbles
+function getDistance(mesh1, mesh2) { 
+    var dx = mesh1.position.x - mesh2.position.x; 
+    var dy = mesh1.position.y - mesh2.position.y; 
+    var dz = mesh1.position.z - mesh2.position.z; 
+    return Math.sqrt(dx*dx+dy*dy+dz*dz); 
+}
 
 $(function(){
     $('#size-filters').on('submit', function(event){
@@ -248,9 +374,19 @@ scene.add(cube);
 
 mmi.addHandler('TORTILLA', 'click', function(mesh) {
 	console.log('interactable mesh has been clicked!');
-	alert(mesh.name + " has been clicked");
+	// alert(mesh.name + " has been clicked");
     console.log(mesh);
+    api.getIcon('trees');
+    // console.log(api.getIcon('nba'));
 });
+
+
+document.getElementById('close').onclick = close_panel;   
+
+function close_panel() {
+    // alert('test')
+    document.getElementById('popup-panels').style.display = 'none';
+}
 
 // creates global lighting to give every object equal light
 const light = new THREE.AmbientLight( 0x404040, 3 ); // soft white light
