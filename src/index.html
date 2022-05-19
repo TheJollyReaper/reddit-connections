@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+
+    <style>
+        body { margin: 0; }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <div>
+        <canvas id="c"></canvas>
+
+        <div id="panel">
+            <form id="Search">
+                <div class="container">
+                    <h5> Search: </h5>
+                    <!-- this search deosn't actually work, I'm not sure how to do that - Sophia-->
+                    <input type="search" placeholder="Search Here" required>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+            <div></div>
+            <form id="size-filters">
+                <div class="container">
+                    <h5>Size: </h5>
+                    <select name="size-filter" id="size-filter">
+                        <!-- <input placeholder="Job" type="text" name="job" /> -->
+                        <option value="N_distinct_posters">Unique Posters</option>
+                        <option value="N_distinct_commenters">Unique Commentors</option>
+                        <option value="mean_comment_length">Mean Comment Length</option>
+                        <option value="N_deleted_posts">Deleted Posts</option>
+                        <!-- <option value="N_distinct_commenters">Mean Comment Length (log)</option> -->
+                        <!-- <option value="N_distinct_commenters">Mean Post Length</option> -->
+                        <!-- <option value="N_distinct_commenters">Mean Post Length (log) </option> -->
+                        <!-- <option value="N_distinct_commenters">Interactions (comments/posts)</option> -->
+                    </select>
+                </div> 
+            </form>
+
+            <form id="color-filters">
+                <div class="container">
+                    <h5>Color: </h5>
+                    <select name="color-filter" id="color-filter">
+                        <!-- <input placeholder="Job" type="text" name="job" /> -->
+                        <option value="clusters">Topic Clusters</option>
+                        <option value="nsfw">NSFW %</option>
+                        <option value="comment_mod">Comment Moderation %</option>
+                        <option value="post_mod">Post Moderation %</option>
+                    </select>
+                </div> 
+            </form>
+
+            <form id="line-filters">
+                <div class="container">
+                    <h5>Lines: </h5>
+                    <select name="line-filter" id="line-filter">
+                        <!-- <input placeholder="Job" type="text" name="job" /> -->
+                        <option value="">Cross Posting %</option>
+                        <option value="">Term Similarity %</option>
+                        <option value="">Author Similarity %</option>
+                        <option value="">Mutualism & Compeition</option>
+                    </select>
+                </div> 
+            </form>
+        </div>
+    </div>
+
+    <div id="popup-panels">
+        <div id="main-section">
+            <img id="subreddit-img" width="60%"/>
+            <button id="close">X</button>
+        </div>
+
+        <h3 id="subreddit-name" style="margin: 5%"></h3>
+        <p id="description"></p>
+
+        <div id="similar-subreddits">
+            <div>
+
+            </div>
+
+            <div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="line-panel">
+        <!-- <h2>hello</h2> -->
+    </div>
+    
+    <my-app></my-app>
+
+  </body>
+</html>

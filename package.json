@@ -1,0 +1,40 @@
+{
+  "name": "three-2",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheJollyReaper/reddit-connections.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheJollyReaper/reddit-connections/issues"
+  },
+  "homepage": "https://github.com/TheJollyReaper/reddit-connections#readme",
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "@danielblagy/three-mmi": "^1.0.0",
+    "lodash": "^4.17.21",
+    "querystring-es3": "^0.2.1",
+    "snoowrap": "^1.23.0",
+    "stream-browserify": "^3.0.0",
+    "three": "^0.140.2",
+    "url": "^0.11.0"
+  }
+}
