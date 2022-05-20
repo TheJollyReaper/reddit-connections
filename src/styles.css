@@ -1,7 +1,7 @@
 .hello {
     color: red;
   }
-  
+
 #panel {
     position: absolute;
     display: flex;
@@ -9,7 +9,7 @@
     z-index: 99;
     left: 1vw;
     top: 2vh;
-    background-color: rgb(221, 221, 221, .9);
+    /* background-color: rgb(221, 221, 221, .9); */
     width: 95vw;
     border-radius: 20px;
 }
@@ -42,5 +42,23 @@
 
 #line-panel {
     position: absolute;
+    display: block;
+}
+
+.container {
+    background-color: rgb(221, 221, 221, .9);
+}
+
+#search-dropdown {
+    height: 25vh;
+    overflow-y: scroll;
+    display: none;
+}
+
+#search-dropdown :hover {
+    background-color: chartreuse;
+}
+
+#search :hover + #search-dropdown {
     display: block;
 }

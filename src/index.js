@@ -30,6 +30,7 @@ var api = new snoowrap({
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 3000 );
 const mmi = new MouseMeshInteraction(scene, camera);
+
 // const api = new RedditApi();
 
 
@@ -64,6 +65,55 @@ filter_update.size = 'N_distinct_posters'
 filter_update.color = 'clusters'
 
 render_dashboard();
+
+var dropdown = document.getElementById("search-dropdown");
+dropdown.style.display = "block";
+for (var sub in subreddit_attributes) {
+    // if (sub.toLowerCase().includes(elem.val().toLowerCase())){
+        const sub_option = document.createElement("h4");
+        sub_option.id = sub + "_dropdown";
+        sub_option.innerHTML = sub;
+        sub_option.style.display = 'none';
+        dropdown.appendChild(sub_option);
+    // }
+}
+
+$('#search-input').each(function() {
+    var elem = $(this);
+ 
+    // Save current value of element
+    elem.data('oldVal', elem.val());
+ 
+    // Look for changes in the value
+    elem.bind("propertychange change click keyup input paste", function(event){
+       // If value has changed...
+       if (elem.data('oldVal') != elem.val()) {
+        // Updated stored value
+        elem.data('oldVal', elem.val());
+ 
+        // Do action
+        if (elem.val() != "") {
+
+            document.getElementById("search-dropdown").style.display = "block";
+            for (var sub in subreddit_attributes) {
+                if (sub.toLowerCase().includes(elem.val().toLowerCase())){
+                    // alert(sub);
+                    document.getElementById(sub + "_dropdown").style.display = 'list-item';
+                } else {
+                    document.getElementById(sub + "_dropdown").style.display = 'none';
+                }
+    
+            }
+            
+            // document.getElementById('drop_holder').remove()
+            
+        } else {
+            document.getElementById("search-dropdown").style.display = "none";
+        }
+    
+      }
+    });
+  });
 
 function render_dashboard() {
     // Go through all objects in scene, delete all bubbles
@@ -195,7 +245,7 @@ function spawn_discs(tsne_data, cluster_data) {
                             scene.remove(scene.children[i]);
                     }
 
-                    camera.position.set( 0, 20, 100 );
+                    camera.position.set( 0, 20, 150 );
                     controls.update();
 
                     scene.position.x = 0;
@@ -204,8 +254,11 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     scene.translateX(-mesh.position.x);
                     scene.translateY(-mesh.position.y);
+                    // camera.rotation.set(0,0,0);
+
+                    // alert(camera.rotation.x + " " + camera.rotation.y + " " + camera.rotation.z);
+
                     camera.position.z = 150;
-                    controls.update();
 
                     // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name)});
@@ -383,7 +436,8 @@ scene.add( light );
 camera.position.z = 5;
 
 const controls = new OrbitControls( camera, renderer.domElement );
-
+controls.enableRotate = false;
+controls.autoRotate = false;
 //controls.update() must be called after any manual changes to the camera's transform
 camera.position.set( 0, 20, 100 );
 controls.update();
@@ -419,7 +473,8 @@ function animate() {
     // camera.position.set(0, 20, 100);
     // console.log(controls.target.distanceTo( controls.object.position ));
 	// required if controls.enableDamping or controls.autoRotate are set to true
-	controls.update();
+	
+    controls.update();
 
 	renderer.render( scene, camera );
 }
