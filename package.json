@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@danielblagy/three-mmi": "^1.0.0",
+    "buffer": "^6.0.3",
     "lodash": "^4.17.21",
     "querystring-es3": "^0.2.1",
     "snoowrap": "^1.23.0",
