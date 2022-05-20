@@ -66,13 +66,41 @@ filter_update.color = 'clusters'
 
 render_dashboard();
 
+// populate dropdown with subreddits
 var dropdown = document.getElementById("search-dropdown");
 dropdown.style.display = "block";
 for (var sub in subreddit_attributes) {
     // if (sub.toLowerCase().includes(elem.val().toLowerCase())){
         const sub_option = document.createElement("h4");
-        sub_option.id = sub + "_dropdown";
+        sub_option.id = sub;
         sub_option.innerHTML = sub;
+        sub_option.onclick = ()=>{
+            // camera.position.set( 0, 20, 150 );
+            controls.update();
+
+            scene.position.x = 0;
+            scene.position.y = 0;
+            scene.position.z = 0;
+
+            // var bubble = document.getElementById(sub_option.id);
+            // alert(-tsne[sub_option.id]['x'] + ", " + -tsne[sub_option.id]['y'])
+            // scene.translateX(-tsne[sub_option.id]['x']);
+            // scene.translateY(-tsne[sub_option.id]['y']);
+
+            scene.position.x = -tsne[sub_option.id]['x'] * 60;
+            scene.position.y = -tsne[sub_option.id]['y'] * 60;
+
+            // camera.rotation.set(0,0,0);
+
+            // alert(camera.rotation.x + " " + camera.rotation.y + " " + camera.rotation.z);
+
+            camera.position.z = 150;
+            // sub_option.style.display = 'none';
+            
+            // document.getElementById('search-input').value = "";
+            // updates panel information
+            sub_focus(sub_option.id, tsne[sub_option.id]['x'] * 60, tsne[sub_option.id]['y'] * 60, 0);
+        };
         sub_option.style.display = 'none';
         dropdown.appendChild(sub_option);
     // }
@@ -98,9 +126,9 @@ $('#search-input').each(function() {
             for (var sub in subreddit_attributes) {
                 if (sub.toLowerCase().includes(elem.val().toLowerCase())){
                     // alert(sub);
-                    document.getElementById(sub + "_dropdown").style.display = 'list-item';
+                    document.getElementById(sub).style.display = 'list-item';
                 } else {
-                    document.getElementById(sub + "_dropdown").style.display = 'none';
+                    document.getElementById(sub).style.display = 'none';
                 }
     
             }
@@ -263,66 +291,7 @@ function spawn_discs(tsne_data, cluster_data) {
                     // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name)});
 
-                    api.getSubreddit(mesh.name).public_description.then(console.log);
- 
-                    getIcon(mesh.name).then(value=>{
-                        document.getElementById('subreddit-img').src=(value);
-                        if (!value) {
-                            getCommImage(mesh.name).then(value=>{
-                                document.getElementById('subreddit-img').src=(value);
-                            })
-                        } 
-                    });
-
-                    getDescription(mesh.name).then(value=>{
-                        document.getElementById('description').innerHTML = value;
-                    })
-
-                    document.getElementById('subreddit-name').innerHTML = "r/" + mesh.name;
-                    document.getElementById('popup-panels').style.display = 'flex';
-                    
-
-                    
-
-                    var distances = {};
-                    for (let i = scene.children.length - 1; i > 0; i--) {
-                        // console.log(scene.children[i]);
-                        distances[scene.children[i].name] = getDistance(mesh, scene.children[i]);
-                    }
-
-                    // Step - 1
-                    // Create the array of key-value pairs
-                    var items = Object.keys(distances).map(
-                        (key) => { return [key, distances[key]] });
-                    
-                    // Step - 2
-                    // Sort the array based on the second element (i.e. the value)
-                    items.sort(
-                        (first, second) => { return first[1] - second[1] }
-                    );
-                    
-                    // Step - 3
-                    // Obtain the list of keys in sorted order of the values.
-                    var closest_subs = items.map(
-                        (e) => { return e[0] });
-
-                    console.log(closest_subs.slice(0,10));
-
-                    for (let i = scene.children.length - 1; i >= 0; i--) {
-                        if (closest_subs.slice(0,10).includes(scene.children[i].name)) {
-                            const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
-                            const points = [];
-                            points.push( new THREE.Vector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
-                            // points.push( new THREE.Vector3( 0, 10, 0 ) );
-                            // console.log(distances[closest_subs[i]]);
-                            points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
-                            
-                            const geometry = new THREE.BufferGeometry().setFromPoints( points );
-                            const line = new THREE.Line( geometry, material );
-                            line.name = "line";
-                            scene.add( line );
-                        }
-                    }
+                    sub_focus(mesh.name, mesh.position.x, mesh.position.y, mesh.position.z);
 
                 
 
@@ -342,16 +311,85 @@ function spawn_discs(tsne_data, cluster_data) {
     // }
 }
 
+function sub_focus(name, x, y, z) {
+    document.getElementById("search-dropdown").display = 'none';
+
+    api.getSubreddit(name).public_description.then(console.log);
+ 
+    getIcon(name).then(value=>{
+        document.getElementById('subreddit-img').src=(value);
+        if (!value) {
+            getCommImage(name).then(value=>{
+                document.getElementById('subreddit-img').src=(value);
+            })
+        } 
+    });
+
+    getDescription(name).then(value=>{
+        document.getElementById('description').innerHTML = value;
+    })
+
+    document.getElementById('subreddit-name').innerHTML = "r/" + name;
+    document.getElementById('popup-panels').style.display = 'flex';
+    
+
+    
+    // Delete old lines
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        if(scene.children[i].type === "Line")
+            scene.remove(scene.children[i]);
+    }
+
+    var distances = {};
+    for (let i = scene.children.length - 1; i > 0; i--) {
+        // console.log(scene.children[i]);
+        distances[scene.children[i].name] = getDistance(x, y, z, scene.children[i]);
+    }
+
+    // Step - 1
+    // Create the array of key-value pairs
+    var items = Object.keys(distances).map(
+        (key) => { return [key, distances[key]] });
+    
+    // Step - 2
+    // Sort the array based on the second element (i.e. the value)
+    items.sort(
+        (first, second) => { return first[1] - second[1] }
+    );
+    
+    // Step - 3
+    // Obtain the list of keys in sorted order of the values.
+    var closest_subs = items.map(
+        (e) => { return e[0] });
+
+    console.log(closest_subs.slice(0,10));
+
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        if (closest_subs.slice(0,10).includes(scene.children[i].name)) {
+            const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+            const points = [];
+            points.push( new THREE.Vector3( x, y, z ) );
+            // points.push( new THREE.Vector3( 0, 10, 0 ) );
+            // console.log(distances[closest_subs[i]]);
+            points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints( points );
+            const line = new THREE.Line( geometry, material );
+            line.name = "line";
+            scene.add( line );
+        }
+    }
+}
 // function SizeChange(event, inputText) {
 //     event.preventDefault();
 //     console.log("testing")
 // }
 
 // calculate distance between two bubbles
-function getDistance(mesh1, mesh2) { 
-    var dx = mesh1.position.x - mesh2.position.x; 
-    var dy = mesh1.position.y - mesh2.position.y; 
-    var dz = mesh1.position.z - mesh2.position.z; 
+function getDistance(x, y, z, mesh2) { 
+    var dx = x - mesh2.position.x; 
+    var dy = y - mesh2.position.y; 
+    var dz = z - mesh2.position.z; 
     return Math.sqrt(dx*dx+dy*dy+dz*dz); 
 }
 
@@ -417,9 +455,9 @@ mmi.addHandler('line', 'mouseenter', function(mesh) {
     // document.getElementById('line-panel').style.top = event.client
 });
 
-document.addEventListener('mousemove', (event) => {
+// document.addEventListener('mousemove', (event) => {
 	
-});
+// });
 
 document.getElementById('close').onclick = close_panel;   
 
@@ -462,7 +500,6 @@ function getDescription(subreddit) {
   const description = api.getSubreddit(subreddit).public_description;
   return description;
 }
-
 
 function animate() {
 	requestAnimationFrame( animate );

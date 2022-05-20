@@ -29,7 +29,8 @@ module.exports = {
             // "timers": require.resolve("timers-browserify"),
             // "util": require.resolve("util/"),
             "url": require.resolve("url/"),
-            "stream": require.resolve("stream-browserify")
+            "stream": require.resolve("stream-browserify"),
+            "buffer": require.resolve("buffer/")
         },
     },
     externals: {

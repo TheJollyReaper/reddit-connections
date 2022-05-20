@@ -59,6 +59,6 @@
     background-color: chartreuse;
 }
 
-#search :hover + #search-dropdown {
+/* #search :hover + #search-dropdown {
     display: block;
-}
+} */
