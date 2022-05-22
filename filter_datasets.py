@@ -14,6 +14,8 @@ import numpy as np
 
 attributes = pd.read_csv("datasets/subreddit_attributes.csv")
 
+attributes['interactions'] = attributes['N_comments'] / attributes['N_posts']
+
 def variables_to_radii(variables):
     for var in variables:
         new_col_name = var + "_radius"
@@ -44,7 +46,8 @@ variables = ['mean_comment_score',
              'N_media_posts',
              'N_nsfw_posts',
              'total_posts_selftext_length',
-             'max_subscribers'
+             'max_subscribers',
+             'interactions'
              ]
 
 variables_to_radii(variables)
