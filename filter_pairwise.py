@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from sympy import maximum
 
 pairwise = pd.read_csv("datasets/pairwise_variables.csv")
 attributes = pd.read_csv("datasets/subreddit_attributes.csv")
@@ -64,6 +65,7 @@ estimates_lines.to_csv("datasets/estimates_lines.csv")
 # 5. merge the extra dataframe back in
 # 6. rename the columns so subreddits j and i are named as they were at the beginning
 # 7. Drop extra columns
+# 8. standardize the cross-posting values and cap them at +3 and -3
 # 8. Save as csv
 
 key_fix = pairwise
@@ -80,5 +82,9 @@ cp_both['Subreddit.j'] = cp_both['Subreddit.j_y']
 cp_both['Subreddit.i'] = cp_both['Subreddit.i_y']
 
 cp_both = cp_both.drop(columns =['Subreddit.i_y', 'Subreddit.j_y', 'Subreddit.i_x', 'Subreddit.j_x', 'key'])
+
+cp_both['cross_posts_scaled'] = (cp_both['cross_posts'] - cp_both['cross_posts'].mean()) / cp_both['cross_posts'].std() 
+cp_both['cross_posts_scaled'] = np.minimum(cp_both['cross_posts_scaled'], 3)
+cp_both['cross_posts_scaled'] = np.maximum(cp_both['cross_posts_scaled'], -3)
 
 cp_both.to_csv("datasets/cross_posting_lines.csv")
