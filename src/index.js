@@ -106,6 +106,23 @@ for (var sub in subreddit_attributes) {
     // }
 }
 
+$('#colorPicker').each(function() {
+    var elem = $(this);
+ 
+    // Save current value of element
+    elem.data('oldVal', elem.val());
+ 
+    // Look for changes in the value
+    elem.bind("propertychange change click keyup input paste", function(event){
+       // If value has changed...
+       if (elem.data('oldVal') != elem.val()) {
+        // Updated stored value
+        elem.data('oldVal', elem.val());
+        scene.background = new THREE.Color( elem.val() );
+      }
+    });
+  });
+
 $('#search-input').each(function() {
     var elem = $(this);
  
@@ -179,6 +196,11 @@ function render_dashboard() {
     
     // });
 }
+const setBackgroundColor = (value) => {
+    console.log(value);
+    // document.querySelector('.txt').style.color = value;
+};
+
 
 // spawn subreddit discs
 function spawn_discs(tsne_data, cluster_data) {
