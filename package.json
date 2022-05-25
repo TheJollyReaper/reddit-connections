@@ -31,11 +31,17 @@
   "dependencies": {
     "@danielblagy/three-mmi": "^1.0.0",
     "buffer": "^6.0.3",
+    "csv-parse": "^5.1.0",
     "lodash": "^4.17.21",
     "querystring-es3": "^0.2.1",
     "snoowrap": "^1.23.0",
     "stream-browserify": "^3.0.0",
     "three": "^0.140.2",
     "url": "^0.11.0"
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   }
 }

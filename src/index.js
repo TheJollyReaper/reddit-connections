@@ -2,13 +2,13 @@ import _ from 'lodash';
 import './styles.css';
 var THREE = require('three');
 import MouseMeshInteraction from '@danielblagy/three-mmi'
-// import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-// import { RedditApi } from './scripts/reddit-api';
+import { Subreddit } from 'snoowrap';
 'use strict';
 const snoowrap = require('snoowrap');
 
 const tsne = require('./data/tsne_10000.json');
+const cross_post = require('./data/cross_posting_lines.json')
 var clusters = require('./data/clusters.json');
 clusters = Object.values(clusters);
 const subreddit_attributes = require('./data/subreddit_attributes.json');
@@ -65,6 +65,40 @@ filter_update.size = 'N_distinct_posters'
 filter_update.color = 'clusters'
 
 render_dashboard();
+
+for (let i = 0; i < Object.keys(cross_post).length; i++) {
+    console.log(i)
+
+    try {
+        // console.log(tsne[cross_post[i]['Subreddit.i']]['x']);
+        // console.log(tsne[cross_post[i]['Subreddit.i']]['y']);
+        // console.log(tsne[cross_post[i]['Subreddit.j']]['x']);
+        // console.log(tsne[cross_post[i]['Subreddit.j']]['y']);
+
+        const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+        const points = [];
+
+
+        points.push( new THREE.Vector3( tsne[cross_post[i]['Subreddit.i']]['x'] * 60, tsne[cross_post[i]['Subreddit.i']]['y'] * 60, 0 ) );
+        console.log(tsne[cross_post[i]['Subreddit.i']]['x']);
+        // points.push( new THREE.Vector3( 0, 10, 0 ) );
+        // console.log(distances[closest_subs[i]]);
+        points.push(  new THREE.Vector3( tsne[cross_post[i]['Subreddit.j']]['x'] * 60, tsne[cross_post[i]['Subreddit.j']]['y'] * 60, 0 ) );
+
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+        const line = new THREE.Line( geometry, material );
+        line.name = "line";
+        scene.add( line );
+    } catch(e) {
+
+    }
+
+    
+    
+    
+}
+
+
 
 // populate dropdown with subreddits
 var dropdown = document.getElementById("search-dropdown");
@@ -357,50 +391,50 @@ function sub_focus(name, x, y, z) {
 
     
     // Delete old lines
-    for (let i = scene.children.length - 1; i >= 0; i--) {
-        if(scene.children[i].type === "Line")
-            scene.remove(scene.children[i]);
-    }
+    // for (let i = scene.children.length - 1; i >= 0; i--) {
+    //     if(scene.children[i].type === "Line")
+    //         scene.remove(scene.children[i]);
+    // // }
 
-    var distances = {};
-    for (let i = scene.children.length - 1; i > 0; i--) {
-        // console.log(scene.children[i]);
-        distances[scene.children[i].name] = getDistance(x, y, z, scene.children[i]);
-    }
+    // var distances = {};
+    // for (let i = scene.children.length - 1; i > 0; i--) {
+    //     // console.log(scene.children[i]);
+    //     distances[scene.children[i].name] = getDistance(x, y, z, scene.children[i]);
+    // }
 
-    // Step - 1
-    // Create the array of key-value pairs
-    var items = Object.keys(distances).map(
-        (key) => { return [key, distances[key]] });
+    // // Step - 1
+    // // Create the array of key-value pairs
+    // var items = Object.keys(distances).map(
+    //     (key) => { return [key, distances[key]] });
     
-    // Step - 2
-    // Sort the array based on the second element (i.e. the value)
-    items.sort(
-        (first, second) => { return first[1] - second[1] }
-    );
+    // // Step - 2
+    // // Sort the array based on the second element (i.e. the value)
+    // items.sort(
+    //     (first, second) => { return first[1] - second[1] }
+    // );
     
-    // Step - 3
-    // Obtain the list of keys in sorted order of the values.
-    var closest_subs = items.map(
-        (e) => { return e[0] });
+    // // Step - 3
+    // // Obtain the list of keys in sorted order of the values.
+    // var closest_subs = items.map(
+    //     (e) => { return e[0] });
 
-    console.log(closest_subs.slice(0,10));
+    // console.log(closest_subs.slice(0,10));
 
-    for (let i = scene.children.length - 1; i >= 0; i--) {
-        if (closest_subs.slice(0,10).includes(scene.children[i].name)) {
-            const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
-            const points = [];
-            points.push( new THREE.Vector3( x, y, z ) );
-            // points.push( new THREE.Vector3( 0, 10, 0 ) );
-            // console.log(distances[closest_subs[i]]);
-            points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
+    // for (let i = scene.children.length - 1; i >= 0; i--) {
+    //     if (closest_subs.slice(0,10).includes(scene.children[i].name)) {
+    //         const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+    //         const points = [];
+    //         points.push( new THREE.Vector3( x, y, z ) );
+    //         // points.push( new THREE.Vector3( 0, 10, 0 ) );
+    //         // console.log(distances[closest_subs[i]]);
+    //         points.push( new THREE.Vector3( scene.children[i].position.x, scene.children[i].position.y, scene.children[i].position.z ) );
             
-            const geometry = new THREE.BufferGeometry().setFromPoints( points );
-            const line = new THREE.Line( geometry, material );
-            line.name = "line";
-            scene.add( line );
-        }
-    }
+    //         const geometry = new THREE.BufferGeometry().setFromPoints( points );
+    //         const line = new THREE.Line( geometry, material );
+    //         line.name = "line";
+    //         scene.add( line );
+    //     }
+    // }
 }
 // function SizeChange(event, inputText) {
 //     event.preventDefault();
