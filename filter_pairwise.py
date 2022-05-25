@@ -6,6 +6,16 @@ from sympy import maximum
 pairwise = pd.read_csv("datasets/pairwise_variables.csv")
 attributes = pd.read_csv("datasets/subreddit_attributes.csv")
 
+# below, filters out pairs that have a lower number of cross-posts
+CROSS_POSTING_THRESHOLD = 20
+
+# below, filters out pairs that have a lower author similarity
+AUTHOR_SIMILARITY_THRESHOLD = 0.90
+
+# below, filters out pairs that have a lower term similarity
+TERM_SIMILARITY_THRESHOLD = 0.90
+
+
 
 ## ESTIMATE (HOVER TAGS AND LINES)
 # This code creates two csv files in the datasets folder
@@ -73,7 +83,7 @@ key_fix['key'] = key_fix['Unnamed: 0']
 cp_base = key_fix
 cp_extra = key_fix[['key', 'Subreddit.i', 'Subreddit.j', 'cross_posts']]
 
-cp_base = cp_base[cp_base['cross_posts'] > 20]
+cp_base = cp_base[cp_base['cross_posts'] > CROSS_POSTING_THRESHOLD]
 cp_base = cp_base.groupby(["cross_posts", 'clid']).max()
 
 cp_both = pd.merge(cp_base, cp_extra, on='key')
@@ -88,3 +98,17 @@ cp_both['cross_posts_scaled'] = np.minimum(cp_both['cross_posts_scaled'], 3)
 cp_both['cross_posts_scaled'] = np.maximum(cp_both['cross_posts_scaled'], -3)
 
 cp_both.to_csv("datasets/cross_posting_lines.csv")
+
+
+
+# AUTHOR SIMILARITY
+
+auth = pairwise
+auth = auth[auth['author_similarity'] > AUTHOR_SIMILARITY_THRESHOLD]
+auth.to_csv("datasets/author_similarity.csv")
+
+# TERM SIMILARITY
+
+term = pairwise
+term = term[term['term_similarity'] > TERM_SIMILARITY_THRESHOLD]
+term.to_csv("datasets/term_similarity.csv")
