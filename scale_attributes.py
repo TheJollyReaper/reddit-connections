@@ -11,19 +11,28 @@
 
 import pandas as pd
 import numpy as np
+from sympy import maximum
 
-attributes = pd.read_csv("datasets/subreddit_attributes.csv")
+att = pd.read_csv("datasets/subreddit_attributes.csv")
 
-attributes['interactions'] = attributes['N_comments'] / attributes['N_posts']
+att['interactions'] = att['N_comments'] / att['N_posts']
+att['links'] = np.maximum(0, att['N_posts'] - att['N_self_posts'] - att['N_media_posts'])
+att['NSFW_%'] = att['N_nsfw_posts'] / att['N_posts']
+att['comment_moderation_%'] = att['N_deleted_comments'] / att['N_comments']
+att['post_moderation_%'] = att['N_deleted_posts'] / att['N_posts']
+att['text_posts_%'] = att['N_self_posts'] / att['N_posts']
+att['media_%'] = att['N_media_posts'] / att['N_posts']
+att['links_%'] = att['links'] / att['N_posts']
+
 
 def variables_to_radii(variables):
     for var in variables:
         new_col_name = var + "_radius"
-        attributes[new_col_name] = (attributes[var] - attributes[var].mean()) / attributes[var].std()  
-        attributes[new_col_name] = np.maximum(attributes[new_col_name], -3)
-        attributes[new_col_name] = np.minimum(attributes[new_col_name], 3)
-        attributes[new_col_name] = attributes[new_col_name] + 4
-        attributes[new_col_name] = np.sqrt(attributes[new_col_name])
+        att[new_col_name] = (att[var] - att[var].mean()) / att[var].std()  
+        att[new_col_name] = np.maximum(att[new_col_name], -3)
+        att[new_col_name] = np.minimum(att[new_col_name], 3)
+        att[new_col_name] = att[new_col_name] + 4
+        att[new_col_name] = np.sqrt(att[new_col_name])
 
 
 variables = ['mean_comment_score',
@@ -47,9 +56,17 @@ variables = ['mean_comment_score',
              'N_nsfw_posts',
              'total_posts_selftext_length',
              'max_subscribers',
-             'interactions'
+             'interactions',
+             'links',
+             'NSFW_%',
+             'comment_moderation_%',
+             'post_moderation_%',
+             'text_posts_%',
+             'media_%',
+             'links_%'
              ]
+
 
 variables_to_radii(variables)
 
-attributes.to_csv("datasets/subreddit_attributes_scaled.csv")
+att.to_csv("datasets/subreddit_attributes_scaled.csv")
