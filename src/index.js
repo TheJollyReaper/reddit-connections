@@ -75,7 +75,7 @@ for (let i = 0; i < Object.keys(cross_post).length; i++) {
         // console.log(tsne[cross_post[i]['Subreddit.j']]['x']);
         // console.log(tsne[cross_post[i]['Subreddit.j']]['y']);
 
-        const material = new THREE.LineBasicMaterial( { color: 0x0000ff, linewidth: 5 } );
+        const material = new THREE.LineBasicMaterial( { color: 'rgba(49, 115, 135, 0.15)', linewidth: 5 } );
         const points = [];
 
 
