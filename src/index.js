@@ -103,9 +103,10 @@ for (let i = 0; i < Object.keys(cross_post).length; i++) {
         const jx = tsne[cross_post[i]['Subreddit.j']]['x'] * scale;
         const jy = tsne[cross_post[i]['Subreddit.j']]['y'] * scale;
 
-        var disc_geom = new THREE.CircleGeometry( 3, 32 );
-        var disc_material = new THREE.MeshStandardMaterial( { color: 'rgb(0,0,0)'});
-        const disc = new THREE.Mesh( disc_geom, disc_material );
+        // var disc_geom = new THREE.CircleGeometry( 3, 32 );
+        // var disc_material = new THREE.MeshStandardMaterial( { color: 'rgb(0,0,0)', transparent: true,
+        //                                                     opacity: 0.1});
+        // const disc = new THREE.Mesh( disc_geom, disc_material );
     
         // Testing: putting coordinate points on the center of point i
         // disc.position.x = jx;
@@ -135,7 +136,8 @@ for (let i = 0; i < Object.keys(cross_post).length; i++) {
 
         //And finally, lets make the lines! ....Edgar, I don't know how to make the lines
         //top line, goes from point c to point d
-        const material = new THREE.LineBasicMaterial( { color: 'rgba(49, 115, 135, 0.15)', linewidth: 5 } ); 
+        const material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
+                                                        opacity: 0.4 } ); 
         const points = []; // Creates an empty, this is where we store the points that will make up the lines
         points.push( new THREE.Vector3( cx,cy, 0 ) ); // This adds a single point to the array
         points.push( new THREE.Vector3( dx,dy, 0 ) ); //need at least two points for a line
