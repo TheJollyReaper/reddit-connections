@@ -3,8 +3,10 @@ import './styles.css';
 var THREE = require('three');
 import MouseMeshInteraction from '@danielblagy/three-mmi'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { Subreddit } from 'snoowrap';
 'use strict';
+
+
+
 const snoowrap = require('snoowrap');
 
 const tsne = require('./data/tsne_10000.json');
@@ -46,6 +48,25 @@ const renderer = new THREE.WebGLRenderer({canvas});
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+function onReady(callback) {
+    var intervalId = window.setInterval(function() {
+      if (document.getElementsByTagName('body')[0] !== undefined) {
+        window.clearInterval(intervalId);
+        callback.call(this);
+      }
+    }, 1000);
+  }
+  
+  function setVisible(selector, visible) {
+    document.querySelector(selector).style.display = visible ? 'block' : 'none';
+  }
+  
+  onReady(function() {
+    setVisible('#everything', true);
+    setVisible('#loading-screen', false);
+    document.querySelector('#panel').style.visibility = 'visible';
+    document.querySelector('#panel').style.display = 'flex';
+  });
 // var subreddit_attributes = {} ;
 // var tsne = null;
 // var clusters = null;
@@ -67,30 +88,70 @@ filter_update.color = 'clusters'
 render_dashboard();
 
 for (let i = 0; i < Object.keys(cross_post).length; i++) {
-    console.log(i)
+    // console.log(i)
 
     try {
         // console.log(tsne[cross_post[i]['Subreddit.i']]['x']);
         // console.log(tsne[cross_post[i]['Subreddit.i']]['y']);
         // console.log(tsne[cross_post[i]['Subreddit.j']]['x']);
         // console.log(tsne[cross_post[i]['Subreddit.j']]['y']);
+        const size_i = subreddit_attributes[cross_post[i]['Subreddit.i']][filter_update.size];
+        const size_j = subreddit_attributes[cross_post[i]['Subreddit.j']][filter_update.size];
+        const scaled_i = Math.log(size_i) / Math.log(2);
+        const scaled_j = Math.log(size_j) / Math.log(2);
 
-        const material = new THREE.LineBasicMaterial( { color: 'rgba(49, 115, 135, 0.15)', linewidth: 5 } );
-        const points = [];
+        const cx = tsne[cross_post[i]['Subreddit.i']]['x'] * 60 + (scaled_i * (tsne[cross_post[i]['Subreddit.i']]['y']) - tsne[cross_post[i]['Subreddit.j']]['y'])
+        const cy = tsne[cross_post[i]['Subreddit.i']]['y'] * 60 + (scaled_i * (tsne[cross_post[i]['Subreddit.i']]['x']) - tsne[cross_post[i]['Subreddit.j']]['x'])
+        
+        var disc_geom = new THREE.CircleGeometry( 3, 32 );
+        var disc_material = new THREE.MeshStandardMaterial( { color: 'rgb(0,0,0)'});
+        const disc = new THREE.Mesh( disc_geom, disc_material );
+    
+        // set the position of that object to the tsne coordinate units
+        disc.position.x = cx;
+        disc.position.y = cy;
+        console.log("DISC DISC DSIC");
+        scene.add(disc);
+        // const dx = tsne[cross_post[i]['Subreddit.j']]['x'] * 60 + (scaled_j * (tsne[cross_post[i]['Subreddit.i']]['y']) - tsne[cross_post[i]['Subreddit.j']]['y'])
+        // const dy = tsne[cross_post[i]['Subreddit.j']]['y'] * 60 + (scaled_j * (tsne[cross_post[i]['Subreddit.i']]['x']) - tsne[cross_post[i]['Subreddit.j']]['x'])
 
 
-        points.push( new THREE.Vector3( tsne[cross_post[i]['Subreddit.i']]['x'] * 60, tsne[cross_post[i]['Subreddit.i']]['y'] * 60, 0 ) );
-        console.log(tsne[cross_post[i]['Subreddit.i']]['x']);
+        // const material = new THREE.LineBasicMaterial( { color: 'rgba(49, 115, 135, 0.15)', linewidth: 5 } );
+        // const points = [];
+
+        // points.push( new THREE.Vector3( cx,cy, 0 ) );
+        // console.log(cx + "," + cy + " | " + dx + "," + dy);
+        // // points.push( new THREE.Vector3( 0, 10, 0 ) );
+        // // console.log(distances[closest_subs[i]]);
+        // points.push(  new THREE.Vector3( dx,dy, 0 ) );
+
+        // points.push( new THREE.Vector3( tsne[cross_post[i]['Subreddit.i']]['x'] * 60, tsne[cross_post[i]['Subreddit.i']]['y'] * 60, 0 ) );
+        // console.log(tsne[cross_post[i]['Subreddit.i']]['x']);
         // points.push( new THREE.Vector3( 0, 10, 0 ) );
         // console.log(distances[closest_subs[i]]);
-        points.push(  new THREE.Vector3( tsne[cross_post[i]['Subreddit.j']]['x'] * 60, tsne[cross_post[i]['Subreddit.j']]['y'] * 60, 0 ) );
+        // points.push(  new THREE.Vector3( tsne[cross_post[i]['Subreddit.j']]['x'] * 60, tsne[cross_post[i]['Subreddit.j']]['y'] * 60, 0 ) );
 
-        const geometry = new THREE.BufferGeometry().setFromPoints( points );
-        const line = new THREE.Line( geometry, material );
-        line.name = "line";
-        scene.add( line );
+        // const geometry = new THREE.BufferGeometry().setFromPoints( points );
+        // const line = new THREE.Line( geometry, material );
+        // line.name = "line";
+        // scene.add( line );
+
+
+
+
+
+        // all of this turtle stuff was meant to place circles in the center, but for some reason
+        // it keeps making the dashboard lag out
+
+        // var turtle_geom = new THREE.CircleGeomtery(3,32);
+        // var turtle_material = new THREE.MeshStandardMaterial( { color: 'rgb(255,255,255)'});
+        // var turtle = new THREE.Mesh(turtle_geom, turtle_material);
+        // turtle.position.x = tsne[cross_post[i]['Subreddit.i']]['x'] * 60;
+        // turtle.position.y = tsne[cross_post[i]['Subreddit.i']]['y'] * 60;
+        // scene.add(turtle);
+        // console.log(cx + cy);
     } catch(e) {
-
+        // alert(subreddit_attributes[cross_post[i]['Subreddit.i']][filter_update.size]);
     }
 
     
