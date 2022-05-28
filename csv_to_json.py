@@ -4,12 +4,12 @@ import json
 cross_posting = {}
 current_index = 0
 
-with open('./src/data/cross_posting_lines.csv') as read_obj:
+with open('./datasets/estimates_lines.csv') as read_obj:
     csv_reader = reader(read_obj)
     headers = next(csv_reader)
     for row in csv_reader:
         # print(row)
-        cross_posting[current_index] = {headers[16]:row[16], headers[17]:row[17], headers[18]:row[18]}
+        cross_posting[current_index] = {headers[1]:row[1], headers[2]:row[2], headers[3]:row[3], headers[4]:row[4]}
         # for idx, x in enumerate(headers):
             # if idx in cross_posting:
                 # cross_posting[current_index] = {headers[idx]:row[idx]}
@@ -20,6 +20,6 @@ with open('./src/data/cross_posting_lines.csv') as read_obj:
         # cross_posting[current_index]
 
 
-with open('cross_posting_lines.json', 'w') as json_file:
+with open('./src/data/estimates_lines.json', 'w') as json_file:
   json.dump(cross_posting, json_file, indent=4, sort_keys=True)
   

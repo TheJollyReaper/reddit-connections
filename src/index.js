@@ -10,10 +10,16 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 const snoowrap = require('snoowrap');
 
 const tsne = require('./data/tsne_10000.json');
-const cross_post = require('./data/cross_posting_lines.json')
 var clusters = require('./data/clusters.json');
 clusters = Object.values(clusters);
 const subreddit_attributes = require('./data/subreddit_attributes.json');
+
+// load line data
+const cross_post = require('./data/cross_posting_lines.json');
+const author_lines = require('./data/author_lines.json');
+const estimates_lines = require('./data/estimates_lines.json');
+const term_similarity_lines = require('./data/term_similarity_lines.json');
+
 
 var api = new snoowrap({
     userAgent: 'scriptapphcdecapstone',
@@ -84,6 +90,7 @@ var filter_update = new Proxy(filters, {
 
 filter_update.size = 'N_distinct_posters'
 filter_update.color = 'clusters'
+filtuer_update.lines = 'cross_posting'
 
 render_dashboard();
 
