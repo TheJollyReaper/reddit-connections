@@ -101,6 +101,10 @@ function renderLines() {
         }
     }
 
+    const scale = 60; //whatever scale is being used to multiply the coordinants, probably should be a universal constant
+    const material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } );
+
     var filter;
     if (filter_update.lines == 'cross_post_lines') {
         filter = cross_post_lines;
@@ -111,84 +115,116 @@ function renderLines() {
     } else if (filter_update.lines == 'estimate_lines') {
         filter = estimates_lines;
     }
-    for (let i = 0; i < Object.keys(filter).length; i++) {
-        // console.log(i)
     
-        try {
-            //Making parallel lines between poins i and j:
+    if (filter_update.lines != 'estimate_lines') {
+        // try {
+        //     var Max_JSO = filter.reduce( (acc, cur, idx, arr )=> ((arr[idx].value > cur.value)? arr[idx] : cur) );
+        //     var Min_JSO = filter.reduce( (acc, cur, idx, arr )=> ((arr[idx].value < cur.value)? arr[idx] : cur) );
+
+        //     alert('min: ' + JSON.stringify(Min_JSO) + " | max: " + JSON.stringify(Max_JSO));
+        // } catch {
+        //     alert("didn't work")
+        // }
+
+        var min = 1000;
+        var max = 0;
+
+        var colors = ['rgb(253,231,37)','rgb(122,209,81)','rgb(34,168,132)',
+                    'rgb(42,120,142)','rgb(65,68,135)','rgb(68,1,84)']
+
+        // getting min max values
+        for (let i = 0; i < Object.keys(filter).length; i++) {
+            try {
+                var value = parseFloat(filter[i].value);
+                if (value < min) {
+                    min = value;
+                }
     
-            //Constants to change
-            const scale = 60; //whatever scale is being used to multiply the coordinants, probably should be a universal constant
-            const offset = 10; //this is how far off the parallel lines are from the center line
-    
-            //First find all the coordinate x and ys of the given points, i and j
-            const ix = tsne[filter[i]['Subreddit.i']]['x'] * scale;
-            const iy = tsne[filter[i]['Subreddit.i']]['y'] * scale;
-            const jx = tsne[filter[i]['Subreddit.j']]['x'] * scale;
-            const jy = tsne[filter[i]['Subreddit.j']]['y'] * scale;
-    
-            // var disc_geom = new THREE.CircleGeometry( 3, 32 );
-            // var disc_material = new THREE.MeshStandardMaterial( { color: 'rgb(0,0,0)', transparent: true,
-            //                                                     opacity: 0.1});
-            // const disc = new THREE.Mesh( disc_geom, disc_material );
+                if (value > max) {
+                    max = value;
+                }
+            } catch {
+                alert('sadness')
+            }
+        }
+
+        alert("Min: " + min + " | Max: " + max);
+
+        for (let i = 0; i < Object.keys(filter).length; i++) {
+            // console.log(i)
         
-            // Testing: putting coordinate points on the center of point i
-            // disc.position.x = jx;
-            // disc.position.y = jy;
-            // console.log("DISC DISC DSIC");
-            // scene.add(disc);
+            try {
+                
+                const ix = tsne[filter[i]['Subreddit.i']]['x'] * scale;
+                const iy = tsne[filter[i]['Subreddit.i']]['y'] * scale;
     
-            //Now let's find the next levels of info
-            const changeX = Math.abs(ix - jx);
-            const changeY = Math.abs(iy-ix);
-            const ij_distance = Math.sqrt(changeX * changeX + changeY * changeY);
-            const ratio = offset / ij_distance;
+                const jx = tsne[filter[i]['Subreddit.j']]['x'] * scale;
+                const jy = tsne[filter[i]['Subreddit.j']]['y'] * scale;
+                
     
-            //Now we get the C and D coordinates! These are the coordinates to use to make the upper lines
-            // the line goes from point c to point d
-            const cx = ix + ratio * changeY;
-            const cy = iy + ratio * changeX;
-            const dx = jx + ratio * changeY;
-            const dy = jy + ratio * changeX;
-    
-            //Now for the e and f coordinates, which are the start and end points of the lower lines
-            // the line goes from 
-            const ex = ix - ratio * changeY;
-            const ey = iy - ratio * changeX;
-            const fx = jx - ratio * changeY;
-            const fy = jy - ratio * changeX;
-    
-            //And finally, lets make the lines! ....Edgar, I don't know how to make the lines
-            //top line, goes from point c to point d
-            const material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
-                                                            opacity: 0.4 } ); 
-            const points = []; // Creates an empty, this is where we store the points that will make up the lines
-            points.push( new THREE.Vector3( cx,cy, 0 ) ); // This adds a single point to the array
-            points.push( new THREE.Vector3( dx,dy, 0 ) ); //need at least two points for a line
-            const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
-            const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
-            scene.add( line ); // add the line to the dashboard
-    
-            // bottom line, goes from point e to point f
-            const points2 = []; // Creates an empty, this is where we store the points that will make up the lines
-            points2.push( new THREE.Vector3( ex,ey, 0 ) ); // This adds a single point to the array
-            points2.push( new THREE.Vector3( fx,fy, 0 ) ); //need at least two points for a line
-            const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 ); // create the geometry based on the points array
-            const line2 = new THREE.Line( geometry2, material ); // create the line given the geometry and material
-            scene.add( line2 ); // add the line to the dashboard
-    
-            // all of this turtle stuff was meant to place circles in the center, but for some reason
-            // it keeps making the dashboard lag out
-    
-            // var turtle_geom = new THREE.CircleGeomtery(3,32);
-            // var turtle_material = new THREE.MeshStandardMaterial( { color: 'rgb(255,255,255)'});
-            // var turtle = new THREE.Mesh(turtle_geom, turtle_material);
-            // turtle.position.x = tsne[cross_post[i]['Subreddit.i']]['x'] * 60;
-            // turtle.position.y = tsne[cross_post[i]['Subreddit.i']]['y'] * 60;
-            // scene.add(turtle);
-            // console.log(cx + cy);
-        } catch(e) {
-            // alert(subreddit_attributes[cross_post[i]['Subreddit.i']][filter_update.size]);
+                const points = []; // Creates an empty, this is where we store the points that will make up the lines
+                points.push( new THREE.Vector3( ix,iy, 0 ) ); // This adds a single point to the array
+                points.push( new THREE.Vector3( jx,jy, 0 ) ); //need at least two points for a line
+                const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
+                const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
+                scene.add( line ); 
+        
+            } catch(e) {
+                // alert(subreddit_attributes[cross_post[i]['Subreddit.i']][filter_update.size]);
+            }
+        }
+    } else {
+        for (let i = 0; i < Object.keys(filter).length; i++) {
+            try {
+                //Making parallel lines between poins i and j:
+
+                //Constants to change
+                const offset = 10; //this is how far off the parallel lines are from the center line
+                //First find all the coordinate x and ys of the given points, i and j
+                const ix = tsne[filter[i]['Subreddit.i']]['x'] * scale;
+                const iy = tsne[filter[i]['Subreddit.i']]['y'] * scale;
+                const jx = tsne[filter[i]['Subreddit.j']]['x'] * scale;
+                const jy = tsne[filter[i]['Subreddit.j']]['y'] * scale;
+
+                //Now let's find the next levels of info
+                const changeX = Math.abs(ix - jx);
+                const changeY = Math.abs(iy-ix);
+                const ij_distance = Math.sqrt(changeX * changeX + changeY * changeY);
+                const ratio = offset / ij_distance;
+        
+                //Now we get the C and D coordinates! These are the coordinates to use to make the upper lines
+                // the line goes from point c to point d
+                const cx = ix + ratio * changeY;
+                const cy = iy + ratio * changeX;
+                const dx = jx + ratio * changeY;
+                const dy = jy + ratio * changeX;
+        
+                //Now for the e and f coordinates, which are the start and end points of the lower lines
+                // the line goes from 
+                const ex = ix - ratio * changeY;
+                const ey = iy - ratio * changeX;
+                const fx = jx - ratio * changeY;
+                const fy = jy - ratio * changeX;
+
+                //And finally, lets make the lines!
+                //top line, goes from point c to point d
+                 
+                const points = []; // Creates an empty, this is where we store the points that will make up the lines
+                points.push( new THREE.Vector3( cx,cy, 0 ) ); // This adds a single point to the array
+                points.push( new THREE.Vector3( dx,dy, 0 ) ); //need at least two points for a line
+                const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
+                const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
+                scene.add( line ); // add the line to the dashboard
+                // bottom line, goes from point e to point f
+                const points2 = []; // Creates an empty, this is where we store the points that will make up the lines
+                points2.push( new THREE.Vector3( ex,ey, 0 ) ); // This adds a single point to the array
+                points2.push( new THREE.Vector3( fx,fy, 0 ) ); //need at least two points for a line
+                const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 ); // create the geometry based on the points array
+                const line2 = new THREE.Line( geometry2, material ); // create the line given the geometry and material
+                scene.add( line2 );
+            } catch {
+                console.log('sadness');
+            }
         }
     }
 }
@@ -419,10 +455,10 @@ function spawn_discs(tsne_data, cluster_data) {
                     // camera.position.z = 0;
 
                     // Delete old lines
-                    for (let i = scene.children.length - 1; i >= 0; i--) {
-                        if(scene.children[i].type === "Line")
-                            scene.remove(scene.children[i]);
-                    }
+                    // for (let i = scene.children.length - 1; i >= 0; i--) {
+                    //     if(scene.children[i].type === "Line")
+                    //         scene.remove(scene.children[i]);
+                    // }
 
                     camera.position.set( 0, 20, 150 );
                     controls.update();

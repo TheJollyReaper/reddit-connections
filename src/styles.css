@@ -54,6 +54,13 @@
     height: 25vh;
     overflow-y: scroll;
     display: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+#search-dropdown::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
 }
 
 #search-dropdown :hover {
