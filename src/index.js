@@ -126,29 +126,30 @@ function renderLines() {
         //     alert("didn't work")
         // }
 
-        var min = 1000;
-        var max = 0;
+        // var min = 1000;
+        // var max = 0;
 
-        var colors = ['rgb(253,231,37)','rgb(122,209,81)','rgb(34,168,132)',
-                    'rgb(42,120,142)','rgb(65,68,135)','rgb(68,1,84)']
+        // var colors = ['rgb(253,231,37)','rgb(122,209,81)','rgb(34,168,132)',
+        //             'rgb(42,120,142)','rgb(65,68,135)','rgb(68,1,84)']
+
+        
 
         // getting min max values
-        for (let i = 0; i < Object.keys(filter).length; i++) {
-            try {
-                var value = parseFloat(filter[i].value);
-                if (value < min) {
-                    min = value;
-                }
+        // for (let i = 0; i < Object.keys(filter).length; i++) {
+        //     try {
+        //         var value = parseFloat(filter[i].value);
+        //         if (value < min) {
+        //             min = value;
+        //         }
     
-                if (value > max) {
-                    max = value;
-                }
-            } catch {
-                alert('sadness')
-            }
-        }
+        //         if (value > max) {
+        //             max = value;
+        //         }
+        //     } catch {
+        //         alert('sadness')
+        //     }
+        // }
 
-        alert("Min: " + min + " | Max: " + max);
 
         for (let i = 0; i < Object.keys(filter).length; i++) {
             // console.log(i)
