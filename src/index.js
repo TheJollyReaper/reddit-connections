@@ -345,6 +345,12 @@ function spawn_discs(tsne_data, cluster_data) {
                       'rgb(32,163,134)','rgb(31,150,139)','rgb(35,138,141)','rgb(40,125,142)',
                       'rgb(45,113,142)','rgb(51,99,141)','rgb(57,85,140)','rgb(64,70,136)',
                       'rgb(59,55,129)','rgb(72,37,118)','rgb(72,20,103)','rgb(68,1,84)']
+        
+        var nsfw_colors = ['rgb(252,255,164)','rgb(241,237,113)','rgb(246,213,67)','rgb(251,186,31)',
+                        'rgb(252,161,8)','rgb(248,135,14)','rgb(241,113,31)','rgb(229,92,48)',
+                        'rgb(215,75,63)','rgb(196,60,78)','rgb(117,50,90)','rgb(155,41,100)',
+                        'rgb(135,33,107)','rgb(113,25,110)','rgb(92,18,110)','rgb(69,10,105)',
+                        'rgb(47,10,91)','rgb(24,12,60)','rgb(8,5,29)','rgb(0,0,4)']
         // iterate through every subreddit in the current cluster
         for (let subreddit = 0; subreddit < cluster_data[cluster].length; subreddit++) {
 
@@ -368,7 +374,12 @@ function spawn_discs(tsne_data, cluster_data) {
                     var color_value = scaled_attributes[cluster_data[cluster][subreddit]][filter_update.color];
                     var index = (Math.round(parseFloat(color_value) * 100 % 5));
                     console.log('index ' + index);
-                    disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index])});
+
+                    if (filter_update.color == "NSFW_%") {
+                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(nsfw_colors[index])});
+                    } else {
+                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index])});
+                    }
                 }
                 // var total_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_posts']
                 // var total_comments = subreddit_attributes[cluster_data[cluster][subreddit]] ['N_comments']
