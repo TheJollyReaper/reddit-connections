@@ -36,7 +36,7 @@ var api = new snoowrap({
 // Basic setup, need to create a scene, a camera, a background,
 // and a renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 3000 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 60000 );
 const mmi = new MouseMeshInteraction(scene, camera);
 
 // const api = new RedditApi();
@@ -117,17 +117,6 @@ function renderLines() {
     }
     
     if (filter_update.lines != 'estimate_lines') {
-        // try {
-        //     var Max_JSO = filter.reduce( (acc, cur, idx, arr )=> ((arr[idx].value > cur.value)? arr[idx] : cur) );
-        //     var Min_JSO = filter.reduce( (acc, cur, idx, arr )=> ((arr[idx].value < cur.value)? arr[idx] : cur) );
-
-        //     alert('min: ' + JSON.stringify(Min_JSO) + " | max: " + JSON.stringify(Max_JSO));
-        // } catch {
-        //     alert("didn't work")
-        // }
-
-        // var min = 1000;
-        // var max = 0;
 
         // var colors = ['rgb(253,231,37)','rgb(122,209,81)','rgb(34,168,132)',
         //             'rgb(42,120,142)','rgb(65,68,135)','rgb(68,1,84)']
@@ -135,20 +124,6 @@ function renderLines() {
         
 
         // getting min max values
-        // for (let i = 0; i < Object.keys(filter).length; i++) {
-        //     try {
-        //         var value = parseFloat(filter[i].value);
-        //         if (value < min) {
-        //             min = value;
-        //         }
-    
-        //         if (value > max) {
-        //             max = value;
-        //         }
-        //     } catch {
-        //         alert('sadness')
-        //     }
-        // }
 
 
         for (let i = 0; i < Object.keys(filter).length; i++) {
