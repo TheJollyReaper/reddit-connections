@@ -1,8 +1,11 @@
 import _ from 'lodash';
 import './styles.css';
 var THREE = require('three');
-import MouseMeshInteraction from '@danielblagy/three-mmi'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import MouseMeshInteraction from '@danielblagy/three-mmi';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+// import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+// import font_test from './encode_sans.json';
 'use strict';
 
 var seedrandom = require('seedrandom');
@@ -22,7 +25,10 @@ const author_lines = require('./data/author_lines.json');
 const estimates_lines = require('./data/estimates_lines.json');
 const term_similarity_lines = require('./data/term_similarity_lines.json');
 
-
+// popup raw data
+const cross_post = require('./data/cross_posting.json');
+const author_similarity = require('./data/author_similarity.json');
+const term_similarity = require('./data/term_similarity.json');
 
 
 var api = new snoowrap({
@@ -55,6 +61,18 @@ const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
 
 const spacing_multiplier = 300;
+
+
+var tooltip = document.querySelectorAll('#line-popup');
+
+document.addEventListener('mousemove', fn, false);
+
+function fn(e) {
+    for (var i=tooltip.length; i--;) {
+        tooltip[i].style.left = e.pageX + 'px';
+        tooltip[i].style.top = e.pageY + 'px';
+    }
+}
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -98,8 +116,27 @@ filter_update.size = 'N_distinct_posters_radius'
 filter_update.color = 'clusters'
 filter_update.lines = 'cross_post_lines'
 
-renderLines();
+// const loader = new FontLoader();
+// loader.load('./encode_sans.json', font => {
+//   textMesh.geometry = new TextGeometry('asdfasdfasdf', {
+//     font: font,
+//     size: 100,
+//     height: 40,
+//     curveSegments: 12,
+//     bevelEnabled: true,
+//     bevelThickness: 30,
+//     bevelSize: 8,
+//     bevelOffset: 1,
+//     bevelSegments: 12
+//   });
+//   textMesh.material = material;
+//   scene.add(textMesh);
+// });
+
+
 function renderLines() {
+    // alert(cross_post[25]['Subreddit.i']);
+
     for (let i = scene.children.length - 1; i >= 0; i--) {
         if(scene.children[i].type === "Line") {
             scene.remove(scene.children[i]);
@@ -123,15 +160,13 @@ function renderLines() {
     
     if (filter_update.lines != 'estimate_lines') {
 
-        
-
-        
-
         // getting min max values
 
 
         for (let i = 0; i < Object.keys(filter).length; i++) {
             // console.log(i)
+
+            // alert(cross_post['1500isplenty1200isplenty']);
         
             try {
                 
@@ -147,6 +182,11 @@ function renderLines() {
                 points.push( new THREE.Vector3( jx,jy, 0 ) ); //need at least two points for a line
                 const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
                 const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
+                line.name = "line";
+                line.sub_i = filter[i]['Subreddit.i'];
+                line.sub_j = filter[i]['Subreddit.j'];
+                // line.combined = line.sub_j + line.sub_i;
+
                 scene.add( line ); 
         
             } catch(e) {
@@ -201,6 +241,16 @@ function renderLines() {
                 points2.push( new THREE.Vector3( fx,fy, 0 ) ); //need at least two points for a line
                 const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 ); // create the geometry based on the points array
                 const line2 = new THREE.Line( geometry2, material ); // create the line given the geometry and material
+                line2.name = "line";
+                line2.sub_i = filter[i]['Subreddit.i'];
+                line2.sub_j = filter[i]['Subreddit.j'];
+                // line2.id = line.sub_j + line.sub_i;
+
+                // var data_index = cross_post.filter(element=>element.Subreddit.i == filter[i]['Subreddit.i']);
+                // data_index = data_index.filter(element=>element.Subreddit.j == filter[j]['Subreddit.i']);
+                // data_index = data_index[0]['index'];
+                // line2.index = data_index;
+
                 scene.add( line2 );
             } catch {
                 console.log('sadness');
@@ -341,7 +391,7 @@ function spawn_discs(tsne_data, cluster_data) {
         
         if (filter_update.color == "clusters") {
             
-            disc_material = new THREE.MeshStandardMaterial( { color: rng.quick() * 0xffffff });
+            disc_material = new THREE.MeshStandardMaterial( { color: rng.quick() * 0xffffff , opacity: 0.75, transparent: true});
         }
         var colors = ['rgb(253,231,37)','rgb(221,227,24)','rgb(186,222,40)','rgb(149,216,64)',
                       'rgb(117,208,84)','rgb(86,198,103)','rgb(61,188,116)','rgb(41,175,127)',
@@ -380,51 +430,38 @@ function spawn_discs(tsne_data, cluster_data) {
                     console.log('index ' + index);
 
                     if (filter_update.color == "NSFW_%") {
-                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(nsfw_colors[index])});
+                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(nsfw_colors[index]), opacity: 0.75});
                     } else {
-                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index])});
+                        disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index]), opacity: 0.75});
                     }
                 }
-                // var total_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_posts']
-                // var total_comments = subreddit_attributes[cluster_data[cluster][subreddit]] ['N_comments']
-                // if (filter_update.color == "nsfw") {
-                //     var nsfw_posts = subreddit_attributes[cluster_data[cluster][subreddit]]['N_nsfw_posts']
 
-                //     var percentage = parseInt(((nsfw_posts) / total_posts)*100).toString() + '%';
-                //     console.log('total_posts: ' + total_posts);
-                //     console.log('nsfw: ' + nsfw_posts);                                                                                    
-                //     console.log('percentage ' + percentage);
-                //     disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
-                // } else if (filter_update.color == "comment_mod") {
-                //     var comments_deleted = subreddit_attributes[cluster_data[cluster][subreddit]]['N_deleted_comments'];
-
-                //     var percentage = parseInt(((comments_deleted) / total_comments)*100).toString() + '%';
-                    
-                //     console.log('total_comments: ' + total_comments);
-                //     console.log('comments deleted: ' + comments_deleted);                                                                                    
-                //     console.log('percentage ' + percentage);
-
-                //     disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
-                // } else if (filter_update.color == "post_mod") {
-                //     var posts_deleted = subreddit_attributes[cluster_data[cluster][subreddit]]['N_deleted_posts'];
-                //     var percentage = parseInt(((posts_deleted) / total_posts)*100).toString() + '%';
-
-                //     disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(`hsl(250, ${percentage}, 50%)`)});
-                // }
                 const disc = new THREE.Mesh( disc_geom, disc_material );
 
                 disc.name = cluster_data[cluster][subreddit];
                 // set the position of that object to the tsne coordinate units
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
-
+                disc.position.z = Math.floor(Math.random() * 10);
                 // add the object to the scene
                 scene.add(disc);
+                
+                //Create outline object
+                // var outline_geo = new THREE.CircleGeometry( size**3 * 5, 32 );
+                // outline_geo.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
+                // outline_geo.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
+                // //Notice the second parameter of the material
+                // var outline_mat = new THREE.MeshBasicMaterial({color : 0x00ff00, side: THREE.BackSide});
+                // var outline = new THREE.Mesh(outline_geo, outline_mat);
+                // //Scale the object up to have an outline (as discussed in previous answer)
+                // outline.scale.multiplyScalar(1.5);
+                // scene.add(outline);
 
                 // Run this function whenever any bubble is clicked
                 mmi.addHandler(cluster_data[cluster][subreddit], 'click', function(mesh) {
                     // alert(mesh.name);
                     console.log('interactable mesh has been clicked!');
+                    // console.log(cross_post);
                     // alert(mesh.position.x);
                     // mesh.name.name
                     // alert(mesh.position.x + "," + mesh.position.y + "," + mesh.position.z); 
@@ -440,7 +477,7 @@ function spawn_discs(tsne_data, cluster_data) {
                     //         scene.remove(scene.children[i]);
                     // }
 
-                    camera.position.set( 0, 20, 150 );
+                    camera.position.set( 0, 20, 600 );
                     controls.update();
 
                     scene.position.x = 0;
@@ -453,7 +490,7 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     // alert(camera.rotation.x + " " + camera.rotation.y + " " + camera.rotation.z);
 
-                    camera.position.z = 150;
+                    camera.position.z = 600;
 
                     // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name)});
@@ -635,10 +672,22 @@ mmi.addHandler('TORTILLA', 'click', function(mesh) {
 
 // line hover detection
 mmi.addHandler('line', 'mouseenter', function(mesh) {
-    console.log("hover over line");
-	// alert('taco');
+    // alert("hover over line");
+    document.getElementById('line-popup').style.display = 'block';
+    // alert(mesh.sub_i + " | " + mesh.sub_j)
+    document.getElementById('popup-subreddits').innerHTML = "r/" + mesh.sub_i + " & " + "r/" + mesh.sub_j;
+	document.getElementById('popup-crossposts').innerHTML = 'Cross-posting: ' + cross_post[mesh.sub_j + mesh.sub_i]['cross_posts'];
+    document.getElementById('popup-author').innerHTML = 'Author Similarity: ' + author_similarity[mesh.sub_j + mesh.sub_i]['author_similarity'] + " (" + author_similarity[mesh.sub_j + mesh.sub_i]['hover_tag'] + ")";
+	document.getElementById('popup-term').innerHTML = 'Term Similarity: ' + term_similarity[mesh.sub_j + mesh.sub_i]['term_similarity'] + " (" + term_similarity[mesh.sub_j + mesh.sub_i]['hover_tag'] + ")";
+
+    // document.getElementById('popup-crossposts').innerHTML = mesh.index;
+    // alert('taco');
     // document.getElementById('line-panel').style.top = event.client
 });
+
+mmi.addHandler('line', 'mouseleave', function(mesh) {
+    document.getElementById('line-popup').style.display = 'none';
+})
 
 // document.addEventListener('mousemove', (event) => {
 	
@@ -704,4 +753,4 @@ function animate() {
 }
 
 animate();
-
+renderLines();

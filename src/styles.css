@@ -157,3 +157,16 @@
         transform: rotate(360deg);
     }
 }
+
+#line-popup {
+    position: absolute;
+    display: none;
+    background-color: rgba(211, 211, 211, 0.856);
+    color: rgb(46, 46, 46);
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: black;
+    padding: 7.5px;
+    /* line-height: 5px; */
+}
