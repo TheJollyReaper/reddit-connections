@@ -23,6 +23,8 @@ const estimates_lines = require('./data/estimates_lines.json');
 const term_similarity_lines = require('./data/term_similarity_lines.json');
 
 
+
+
 var api = new snoowrap({
     userAgent: 'scriptapphcdecapstone',
     clientId: 'hQJu2h7ae10lGVNRSrRoOQ',
@@ -52,6 +54,7 @@ scene.background = new THREE.Color( 0xecffa8 );
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
 
+const spacing_multiplier = 300;
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -91,7 +94,7 @@ var filter_update = new Proxy(filters, {
     }
 })
 
-filter_update.size = 'N_distinct_posters'
+filter_update.size = 'N_distinct_posters_radius'
 filter_update.color = 'clusters'
 filter_update.lines = 'cross_post_lines'
 
@@ -103,7 +106,7 @@ function renderLines() {
         }
     }
 
-    const scale = 60; //whatever scale is being used to multiply the coordinants, probably should be a universal constant
+    const scale = spacing_multiplier; //whatever scale is being used to multiply the coordinants, probably should be a universal constant
     const material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
                                                             opacity: 0.4 } );
 
@@ -228,8 +231,8 @@ for (var sub in subreddit_attributes) {
             // scene.translateX(-tsne[sub_option.id]['x']);
             // scene.translateY(-tsne[sub_option.id]['y']);
 
-            scene.position.x = -tsne[sub_option.id]['x'] * 60;
-            scene.position.y = -tsne[sub_option.id]['y'] * 60;
+            scene.position.x = -tsne[sub_option.id]['x'] * spacing_multiplier;
+            scene.position.y = -tsne[sub_option.id]['y'] * spacing_multiplier;
 
             // camera.rotation.set(0,0,0);
 
@@ -240,7 +243,7 @@ for (var sub in subreddit_attributes) {
             
             // document.getElementById('search-input').value = "";
             // updates panel information
-            sub_focus(sub_option.id, tsne[sub_option.id]['x'] * 60, tsne[sub_option.id]['y'] * 60, 0);
+            sub_focus(sub_option.id, tsne[sub_option.id]['x'] * spacing_multiplier, tsne[sub_option.id]['y'] * spacing_multiplier, 0);
         };
         sub_option.style.display = 'none';
         dropdown.appendChild(sub_option);
@@ -364,10 +367,11 @@ function spawn_discs(tsne_data, cluster_data) {
                 console.log(tsne_data[cluster_data[cluster][subreddit]]['y'])
                 
                 // console.log(size_filter);
-                var size = subreddit_attributes[cluster_data[cluster][subreddit]][filter_update.size]
+                var size = scaled_attributes[cluster_data[cluster][subreddit]][filter_update.size]
                 // create an object with the given geometry and material we set above
-                var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
-                
+                // var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
+                var disc_geom = new THREE.CircleGeometry( size**3 * 5, 32 );
+
                 if (filter_update.color != 'clusters') {
                     console.log(filter_update.color);
                     console.log(scaled_attributes[cluster_data[cluster][subreddit]][filter_update.color]);
@@ -411,8 +415,8 @@ function spawn_discs(tsne_data, cluster_data) {
 
                 disc.name = cluster_data[cluster][subreddit];
                 // set the position of that object to the tsne coordinate units
-                disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * 60;
-                disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * 60;
+                disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
+                disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
 
                 // add the object to the scene
                 scene.add(disc);
