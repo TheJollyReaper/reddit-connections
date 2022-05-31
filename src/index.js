@@ -3,6 +3,7 @@ import './styles.css';
 var THREE = require('three');
 import MouseMeshInteraction from '@danielblagy/three-mmi';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { ArrowHelper } from 'three';
 // import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 // import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 // import font_test from './encode_sans.json';
@@ -242,6 +243,14 @@ function renderLines() {
                     material = new THREE.LineBasicMaterial( { color: 'rgb(255, 0, 0)', linewidth: 5, transparent: true,
                                                             opacity: 0.4 } );
                 }
+
+                var from = new THREE.Vector3( cx, cy, 1 );
+                var to = new THREE.Vector3( dx, dy, 1 );
+                var direction = to.clone().sub(from);
+                var length = direction.length();
+                var arrowHelper = new ArrowHelper(direction.normalize(), from, length, material.color);
+                arrowHelper.setLength(length, 25, 25);
+                scene.add( arrowHelper );
                 
                 const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
                 line.name = "line";
@@ -278,6 +287,15 @@ function renderLines() {
                 // line2.index = data_index;
 
                 scene.add( line2 );
+
+                var from = new THREE.Vector3( fx, fy, 1 );
+                var to = new THREE.Vector3( ex, ey, 1 );
+                var direction = to.clone().sub(from);
+                var length = direction.length();
+                var arrowHelper = new ArrowHelper(direction.normalize(), from, length, material.color);
+                arrowHelper.setLength(length, 25, 25);
+                scene.add( arrowHelper );
+
             } catch {
                 console.log('sadness');
             }
