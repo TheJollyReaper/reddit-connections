@@ -36,10 +36,20 @@
                     <h5>Size: </h5>
                     <select name="size-filter" id="size-filter" class="filter">
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
+                        <option value="max_subscribers_radius">Subscribers</option>
+                        <option value="max_subscribers_radius">Total Posts</option>
                         <option value="N_distinct_posters_radius">Unique Posters</option>
-                        <option value="N_distinct_commenters_radius">Unique Commentors</option>
-                        <option value="mean_comment_score_radius">Mean Comment Length</option>
-                        <option value="N_deleted_posts_radius">Deleted Posts</option>
+                        <option value="N_distinct_commenters_radius">Unique Commenters</option>
+                        <option value="N_self_posts_radius">Average Text Post Length</option>
+                        <option value="mean_comment_length_radius">Average Comment Length</option>
+                        <option value="mean_post_score_radius">Average Post Score</option>
+                        <option value="mean_comment_score_radius">Average Comment Score</option>
+                        <option value="interactions_radius">Interactions (Comments/Post)</option>
+                        <!-- <option value="N_deleted_posts_radius">Deleted Posts</option> -->
+                        <!-- <option value="N_distinct_posters_radius">Unique Posters</option> -->
+                        <!-- <option value="N_distinct_commenters_radius">Unique Commentors</option> -->
+                        <!-- <option value="mean_comment_score_radius">Mean Comment Length</option> -->
+                        <!-- <option value="N_deleted_posts_radius">Deleted Posts</option> -->
                         <!-- <option value="N_distinct_commenters">Mean Comment Length (log)</option> -->
                         <!-- <option value="N_distinct_commenters">Mean Post Length</option> -->
                         <!-- <option value="N_distinct_commenters">Mean Post Length (log) </option> -->
@@ -55,9 +65,11 @@
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
                         <option value="clusters">Topic Clusters</option>
                         <option value="NSFW_%">NSFW %</option>
-                        <option value="comment_moderation_%">Comment Moderation %</option>
                         <option value="post_moderation_%">Post Moderation %</option>
+                        <option value="comment_moderation_%">Comment Moderation %</option>
                         <option value="text_posts_%">Text Posts %</option>
+                        <option value="media %">Media %</option>
+                        <option value="links_%">Links %</option>
                     </select>
                 </div> 
             </form>
