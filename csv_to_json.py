@@ -4,7 +4,7 @@ import json
 cross_posting = {}
 current_index = 0
 
-with open('./datasets/term_similarity.csv') as read_obj:
+with open('./datasets/estimates_full.csv') as read_obj:
     csv_reader = reader(read_obj)
     headers = next(csv_reader)
     for row in csv_reader:
@@ -20,6 +20,6 @@ with open('./datasets/term_similarity.csv') as read_obj:
         # cross_posting[current_index]
 
 
-with open('./src/data/term_similarity.json', 'w') as json_file:
+with open('./src/data/estimates_full.json', 'w') as json_file:
   json.dump(cross_posting, json_file, indent=4, sort_keys=True)
   

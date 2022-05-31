@@ -29,6 +29,7 @@ const term_similarity_lines = require('./data/term_similarity_lines.json');
 const cross_post = require('./data/cross_posting.json');
 const author_similarity = require('./data/author_similarity.json');
 const term_similarity = require('./data/term_similarity.json');
+const estimates_full = require('./data/estimates_full.json');
 
 
 var api = new snoowrap({
@@ -144,7 +145,7 @@ function renderLines() {
     }
 
     const scale = spacing_multiplier; //whatever scale is being used to multiply the coordinants, probably should be a universal constant
-    const material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
+    var material = new THREE.LineBasicMaterial( { color: 'rgb(49, 115, 135)', linewidth: 5, transparent: true,
                                                             opacity: 0.4 } );
 
     var filter;
@@ -233,15 +234,40 @@ function renderLines() {
                 points.push( new THREE.Vector3( cx,cy, 0 ) ); // This adds a single point to the array
                 points.push( new THREE.Vector3( dx,dy, 0 ) ); //need at least two points for a line
                 const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
+
+                if (estimates_full[filter[i]['Subreddit.j'] + filter[i]['Subreddit.i']].new_estimate > 0) {
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 213, 255)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } );
+                } else {
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 0, 0)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } );
+                }
+                
                 const line = new THREE.Line( geometry, material ); // create the line given the geometry and material
+                line.name = "line";
+                line.secret_id = "line";
+                line.sub_i = filter[i]['Subreddit.j'];
+                line.sub_j = filter[i]['Subreddit.i'];
                 scene.add( line ); // add the line to the dashboard
+
+
                 // bottom line, goes from point e to point f
                 const points2 = []; // Creates an empty, this is where we store the points that will make up the lines
                 points2.push( new THREE.Vector3( ex,ey, 0 ) ); // This adds a single point to the array
                 points2.push( new THREE.Vector3( fx,fy, 0 ) ); //need at least two points for a line
                 const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 ); // create the geometry based on the points array
+                
+                if (estimates_full[filter[i]['Subreddit.i'] + filter[i]['Subreddit.j']].new_estimate > 0) {
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 213, 255)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } );
+                } else {
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 0, 0)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } );
+                }
+                
                 const line2 = new THREE.Line( geometry2, material ); // create the line given the geometry and material
                 line2.name = "line";
+                line2.secret_id = "line2";
                 line2.sub_i = filter[i]['Subreddit.i'];
                 line2.sub_j = filter[i]['Subreddit.j'];
                 // line2.id = line.sub_j + line.sub_i;
@@ -697,6 +723,9 @@ mmi.addHandler('line', 'mouseenter', function(mesh) {
 	document.getElementById('popup-crossposts').innerHTML = 'Cross-posting: ' + cross_post[mesh.sub_j + mesh.sub_i]['cross_posts'];
     document.getElementById('popup-author').innerHTML = 'Author Similarity: ' + author_similarity[mesh.sub_j + mesh.sub_i]['author_similarity'] + " (" + author_similarity[mesh.sub_j + mesh.sub_i]['hover_tag'] + ")";
 	document.getElementById('popup-term').innerHTML = 'Term Similarity: ' + term_similarity[mesh.sub_j + mesh.sub_i]['term_similarity'] + " (" + term_similarity[mesh.sub_j + mesh.sub_i]['hover_tag'] + ")";
+    
+    document.getElementById('popup-estimate').innerHTML = mesh.sub_j + " to " + mesh.sub_i + ": " + estimates_full[mesh.sub_j + mesh.sub_i]['new_estimate'] + " (" + estimates_full[mesh.sub_j + mesh.sub_i]['hover_tag'] + ")";
+    document.getElementById('popup-estimate2').innerHTML = mesh.sub_i + " to " + mesh.sub_j + ": " + estimates_full[mesh.sub_i + mesh.sub_j]['new_estimate'] + " (" + estimates_full[mesh.sub_i + mesh.sub_j]['hover_tag'] + ")";
 
     // document.getElementById('popup-crossposts').innerHTML = mesh.index;
     // alert('taco');
