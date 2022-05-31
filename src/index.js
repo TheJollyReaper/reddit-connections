@@ -17,7 +17,7 @@ const tsne = require('./data/tsne_10000.json');
 var clusters = require('./data/clusters.json');
 clusters = Object.values(clusters);
 const subreddit_attributes = require('./data/subreddit_attributes.json');
-const scaled_attributes = require('./data/subreddit_attributes_scaled.json');
+const scaled_attributes = require('./data/NEW_subreddit_attributes_scaled.json');
 
 // load line data
 const cross_post_lines = require('./data/cross_posting_lines.json');
@@ -425,7 +425,7 @@ function spawn_discs(tsne_data, cluster_data) {
                 var size = scaled_attributes[cluster_data[cluster][subreddit]][filter_update.size]
                 // create an object with the given geometry and material we set above
                 // var disc_geom = new THREE.CircleGeometry( Math.log(size) / Math.log(2), 32 );
-                var disc_geom = new THREE.CircleGeometry( size**3 * 5, 32 );
+                var disc_geom = new THREE.CircleGeometry( size * 20, 32 );
 
                 if (filter_update.color != 'clusters') {
                     console.log(filter_update.color);
@@ -447,7 +447,8 @@ function spawn_discs(tsne_data, cluster_data) {
                 // set the position of that object to the tsne coordinate units
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
-                disc.position.z = Math.floor(Math.random() * 10);
+                // disc.position.z = Math.floor(Math.random() * 10);
+                disc.position.z = size;
                 // add the object to the scene
                 scene.add(disc);
                 
