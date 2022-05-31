@@ -55,7 +55,7 @@ const mmi = new MouseMeshInteraction(scene, camera);
 
 // var api = new RedditApi();
 // if you want to adjust the background color change the hex code here
-scene.background = new THREE.Color( 0xecffa8 );
+scene.background = new THREE.Color( 0x000000 );
 
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
@@ -263,9 +263,14 @@ function renderLines() {
 // populate dropdown with subreddits
 var dropdown = document.getElementById("search-dropdown");
 dropdown.style.display = "block";
+
 for (var sub in subreddit_attributes) {
     // if (sub.toLowerCase().includes(elem.val().toLowerCase())){
         const sub_option = document.createElement("h4");
+        sub_option.style.padding = '0';
+        sub_option.style.margin = '0';
+        sub_option.style.marginLeft = '.5vw';
+        sub_option.style.height = '10%';
         sub_option.id = sub;
         sub_option.innerHTML = sub;
         sub_option.onclick = ()=>{

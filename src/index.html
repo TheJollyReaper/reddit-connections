@@ -24,9 +24,7 @@
         <div id="panel">
 
             <div id="search">
-                <h5> Search: </h5>
-                <!-- this search doesn't actually work, I'm not sure how to do that - Sophia-->
-                <input id="search-input" type="search" placeholder="Search Here" required>
+                <input id="search-input" type="search" placeholder="Search for a subreddit" required>
                 <div id="search-dropdown">
                     <!-- Subreddits get inserted here through javascript -->
                 </div>
@@ -36,7 +34,7 @@
             <form id="size-filters">
                 <div class="container">
                     <h5>Size: </h5>
-                    <select name="size-filter" id="size-filter">
+                    <select name="size-filter" id="size-filter" class="filter">
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
                         <option value="N_distinct_posters_radius">Unique Posters</option>
                         <option value="N_distinct_commenters_radius">Unique Commentors</option>
@@ -53,7 +51,7 @@
             <form id="color-filters">
                 <div class="container">
                     <h5>Color: </h5>
-                    <select name="color-filter" id="color-filter">
+                    <select name="color-filter" id="color-filter" class="filter">
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
                         <option value="clusters">Topic Clusters</option>
                         <option value="NSFW_%">NSFW %</option>
@@ -67,7 +65,7 @@
             <form id="line-filters">
                 <div class="container">
                     <h5>Lines: </h5>
-                    <select name="line-filter" id="line-filter">
+                    <select name="line-filter" id="line-filter" class="filter">
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
                         <option value="cross_post_lines">Cross Posting %</option>
                         <option value="term_similarity_lines">Term Similarity %</option>
@@ -77,7 +75,7 @@
                 </div> 
             </form>
 
-            <input type="color" value="#f6f82" id="colorPicker" onchange=setBackgroundColor(value)>
+            <!-- <input type="color" value="#f6f82" id="colorPicker" onchange=setBackgroundColor(value)> -->
         </div>
     </div>
 
