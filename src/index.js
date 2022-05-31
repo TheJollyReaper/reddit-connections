@@ -289,11 +289,23 @@ for (var sub in subreddit_attributes) {
             scene.position.x = -tsne[sub_option.id]['x'] * spacing_multiplier;
             scene.position.y = -tsne[sub_option.id]['y'] * spacing_multiplier;
 
+            // scene.position.x = 0;
+            // scene.position.y = 0;
+            // scene.position.z = 0;
+
+            // scene.translateX(-mesh.position.x);
+            // scene.translateY(-mesh.position.y);
             // camera.rotation.set(0,0,0);
 
             // alert(camera.rotation.x + " " + camera.rotation.y + " " + camera.rotation.z);
 
-            camera.position.z = 150;
+            camera.position.z = 600;
+
+            // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
+            //                                             console.log(value); alert(mesh.name)});
+            // camera.rotation.set(0,0,0);
+
+            // alert(camera.rotation.x + " " + camera.rotation.y + " " + camera.rotation.z);
             // sub_option.style.display = 'none';
             
             // document.getElementById('search-input').value = "";
@@ -448,7 +460,7 @@ function spawn_discs(tsne_data, cluster_data) {
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
                 // disc.position.z = Math.floor(Math.random() * 10);
-                disc.position.z = size;
+                disc.position.z = -size;
                 // add the object to the scene
                 scene.add(disc);
                 
