@@ -19,7 +19,7 @@ CROSS_POSTING_THRESHOLD = 20
 AUTHOR_SIMILARITY_THRESHOLD = 0.98
 
 # below, filters out pairs that have a lower term similarity
-TERM_SIMILARITY_THRESHOLD = 0.99
+TERM_SIMILARITY_THRESHOLD = 0.98
 
 
 
