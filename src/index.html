@@ -37,7 +37,7 @@
                     <select name="size-filter" id="size-filter" class="filter">
                         <!-- <input placeholder="Job" type="text" name="job" /> -->
                         <option value="N_posts_radius">Total Posts</option>
-                        <option value="max_subscribers_radius">Subscribers</option>
+                        <option value="max_subscribers_radius">Max Subscribers</option>
                         <option value="N_distinct_posters_radius">Unique Posters</option>
                         <option value="N_distinct_commenters_radius">Unique Commenters</option>
                         <option value="N_self_posts_radius">Average Text Post Length</option>
@@ -109,6 +109,11 @@
         <h3 id="subreddit-name" style="margin: 5%"></h3>
         <p id="description"></p>
 
+        <div style="display: flex; flex-direction:row">
+            <a id="visit-link" target="_blank" rel="noreferrer noopener" url><button class="links"><h3 >Visit</h3></button></a>
+            <a id="rules-link" target="_blank" rel="noreferrer noopener" url><button class="links" ><h3>Rules</h3></button></a>
+        </div>
+
         <div id="similar-subreddits">
             <div>
 
@@ -123,6 +128,75 @@
     <div id="line-panel">
         <!-- <h2>hello</h2> -->
     </div>
+
+    <div id="legend">
+        <h5>low</h5>
+        <div id = 'color-0' class="gradient-block">
+
+        </div>
+        <div id = 'color-1' class="gradient-block">
+
+        </div>
+        <div id = 'color-2' class="gradient-block">
+
+        </div>
+        <div id = 'color-3' class="gradient-block">
+
+        </div>
+        <div id = 'color-4' class="gradient-block">
+
+        </div>
+
+        <div id = 'color-5' class="gradient-block">
+
+        </div>
+        <div id = 'color-6' class="gradient-block">
+
+        </div>
+        <div id = 'color-7' class="gradient-block">
+
+        </div>
+        <div id = 'color-8' class="gradient-block">
+
+        </div>
+        <div id = 'color-9' class="gradient-block">
+
+        </div>
+        <h5>high</h5>
+    </div>
+
+    <!-- <div id="menu"> -->
+    <div class="menu-tabs">
+        <button id="about-button" class="tablinks">About</button>
+        <button id="tutorial-button" class="tablinks">Tutorial</button>
+        <button id="data-button" class="tablinks">Data</button>
+    </div>
+
+    <div id="menu-content"> 
+        <div id="about">
+            <h3>Reddit Connections</h3>
+        </div>
+    
+        <div id="tutorial">
+            <h3>Tutorial</h3>
+        </div>
+    
+        <div id="data">
+            <h3>Data</h3>
+            <ul>
+                <li>
+                    <h5><b>Bubble position based on t-SNE Coordiantes</b></h5>
+                    <h6>Approximation of subreddit similarity. Most accurate between subreddits that are close together, less accurate as the subreddits get farther apart. 
+
+                        This data is found by embedding subreddits with similar sets of commenters. 
+                        
+                        (For more information, see the methods section of the research paper “No Community Can do everything” https://dl.acm.org/doi/10.1145/3512908 )</h6>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- </div> -->
+    
     
     <my-app></my-app>
 

@@ -135,12 +135,35 @@ filter_update.lines = 'cross_post_lines'
 //   scene.add(textMesh);
 // });
 
+document.getElementById('about-button').onclick = ()=>{openMenu('about')}
+document.getElementById('tutorial-button').onclick = ()=>{openMenu('tutorial')}
+document.getElementById('data-button').onclick = ()=>{openMenu('data')}
+
+function openMenu(menu) {
+    // alert('menu');
+    document.getElementById('menu-content').style.display = 'block'; 
+    document.getElementById('about').style.display = 'none'; 
+    document.getElementById('tutorial').style.display = 'none'; 
+    document.getElementById('data').style.display = 'none'; 
+
+    document.getElementById(menu).style.display = 'block'; 
+}
+// document.getElementById('tutorial').onclick = ()=>{openMenu('tutorial')};
+// document.getElementById('data').onclick = ()=>{openMenu('data')};
 
 function renderLines() {
     // alert(cross_post[25]['Subreddit.i']);
 
+    
+
     for (let i = scene.children.length - 1; i >= 0; i--) {
         if(scene.children[i].type === "Line") {
+            scene.remove(scene.children[i]);
+        }
+    }
+
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        if(scene.children[i].type === "ArrowHelper") {
             scene.remove(scene.children[i]);
         }
     }
@@ -451,7 +474,7 @@ function spawn_discs(tsne_data, cluster_data) {
         var disc_material = new THREE.MeshStandardMaterial();
         
         if (filter_update.color == "clusters") {
-            
+            document.getElementById('legend').style.display = 'none';
             disc_material = new THREE.MeshStandardMaterial( { color: rng.quick() * 0xffffff , opacity: 0.75, transparent: true});
         }
         var colors = ['rgb(253,231,37)','rgb(221,227,24)','rgb(186,222,40)','rgb(149,216,64)',
@@ -484,6 +507,7 @@ function spawn_discs(tsne_data, cluster_data) {
                 var disc_geom = new THREE.CircleGeometry( size * 20, 32 );
 
                 if (filter_update.color != 'clusters') {
+                    document.getElementById('legend').style.display = 'flex';
                     console.log(filter_update.color);
                     console.log(scaled_attributes[cluster_data[cluster][subreddit]][filter_update.color]);
                     var color_value = scaled_attributes[cluster_data[cluster][subreddit]][filter_update.color];
@@ -491,8 +515,28 @@ function spawn_discs(tsne_data, cluster_data) {
                     console.log('index ' + index);
 
                     if (filter_update.color == "NSFW_%") {
+                        document.getElementById('color-0').style.backgroundColor = nsfw_colors[0];
+                        document.getElementById('color-1').style.backgroundColor = nsfw_colors[2];
+                        document.getElementById('color-2').style.backgroundColor = nsfw_colors[4];
+                        document.getElementById('color-3').style.backgroundColor = nsfw_colors[6];
+                        document.getElementById('color-4').style.backgroundColor = nsfw_colors[8];
+                        document.getElementById('color-5').style.backgroundColor = nsfw_colors[10];
+                        document.getElementById('color-6').style.backgroundColor = nsfw_colors[12];
+                        document.getElementById('color-7').style.backgroundColor = nsfw_colors[14];
+                        document.getElementById('color-8').style.backgroundColor = nsfw_colors[16];
+                        document.getElementById('color-9').style.backgroundColor = nsfw_colors[18];
                         disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(nsfw_colors[index]), opacity: 0.75});
                     } else {
+                        document.getElementById('color-0').style.backgroundColor = colors[0];
+                        document.getElementById('color-1').style.backgroundColor = colors[2];
+                        document.getElementById('color-2').style.backgroundColor = colors[4];
+                        document.getElementById('color-3').style.backgroundColor = colors[6];
+                        document.getElementById('color-4').style.backgroundColor = colors[8];
+                        document.getElementById('color-5').style.backgroundColor = colors[10];
+                        document.getElementById('color-6').style.backgroundColor = colors[12];
+                        document.getElementById('color-7').style.backgroundColor = colors[14];
+                        document.getElementById('color-8').style.backgroundColor = colors[16];
+                        document.getElementById('color-9').style.backgroundColor = colors[18];
                         disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index]), opacity: 0.75});
                     }
                 }
@@ -518,6 +562,7 @@ function spawn_discs(tsne_data, cluster_data) {
                 // //Scale the object up to have an outline (as discussed in previous answer)
                 // outline.scale.multiplyScalar(1.5);
                 // scene.add(outline);
+                
 
                 // Run this function whenever any bubble is clicked
                 mmi.addHandler(cluster_data[cluster][subreddit], 'click', function(mesh) {
@@ -597,8 +642,8 @@ function sub_focus(name, x, y, z) {
 
     document.getElementById('subreddit-name').innerHTML = "r/" + name;
     document.getElementById('popup-panels').style.display = 'flex';
-    
-
+    document.getElementById('visit-link').href = 'https://www.reddit.com/r/' + name;
+    document.getElementById('rules-link').href = 'https://www.reddit.com/r/' + name + '/wiki/';
     
     // Delete old lines
     // for (let i = scene.children.length - 1; i >= 0; i--) {
@@ -819,3 +864,4 @@ function animate() {
 
 animate();
 renderLines();
+
