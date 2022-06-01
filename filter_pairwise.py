@@ -10,7 +10,7 @@ attributes = pd.read_csv("datasets/subreddit_attributes.csv")
 
 
 # below, filters out pairs that have a weaker mutualism and competition
-ESTIMATE_THRESHOLD = 0.127
+ESTIMATE_THRESHOLD = 0.160
 
 # below, filters out pairs that have a lower number of cross-posts
 CROSS_POSTING_THRESHOLD = 20
@@ -71,6 +71,10 @@ estimate_lines = estimates_full[np.abs(estimates_full['new_estimate']) > ESTIMAT
 # export dataframes to csv
 estimates_full.to_csv("datasets/estimates_full.csv")
 estimate_lines.to_csv("datasets/estimates_lines.csv")
+
+# print(len(estimate_lines))
+# print(len(estimate_lines[estimate_lines['new_estimate'] < 0]))
+# print(len(estimate_lines[estimate_lines['new_estimate'] > 0]))
 
 
 # CROSS POSTING
