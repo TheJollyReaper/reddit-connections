@@ -24,7 +24,7 @@ base['text_posts_%'] = base['N_self_posts'] / base['N_posts']
 base['media_%'] = base['N_media_posts'] / base['N_posts']
 base['links_%'] = base['links'] / base['N_posts']
 
-
+print(len(base))
 
 
 variables = ['mean_comment_score',
@@ -74,7 +74,6 @@ def new_variables_to_radii(variables):
         new_col_name = var + "_radius"
         att2[new_col_name] = (att2[var] - att2[var].mean()) / att2[var].std() 
         att2[new_col_name] = np.maximum(att2[new_col_name], -3)
-     #   att2[new_col_name] = np.minimum(att2[new_col_name], 3)
         att2[new_col_name] = att2[new_col_name] + 4
         att2[new_col_name] = np.sqrt(att2[new_col_name])
         print(var + " min: " + str(round(att2[new_col_name].min(), 2)) + " max: " + str(round(att2[new_col_name].max(), 2)))
@@ -91,20 +90,6 @@ new_variables_to_radii(variables)
 
 att2.to_csv("datasets/NEW_subreddit_attributes_scaled.csv")
 
-
-
-variables2 = ['N_comments',
-             'N_distinct_commenters',
-             'N_deleted_comments',
-             'mean_comment_length',
-             'N_posts',
-             'N_distinct_posters',
-             'N_self_posts',
-             'total_posts_selftext_length',
-             'max_subscribers',
-             'interactions',
-             'links',
-             ]
 
 
 #def stats(variables, df):

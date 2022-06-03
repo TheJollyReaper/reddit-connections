@@ -1,4 +1,4 @@
-index,Subreddit.j,Subreddit.i,term_similarity,hover_tag
+,Subreddit.j,Subreddit.i,term_similarity,hover_tag
 0,imagesofcolorado,imagesofcalifornia,0.0333,a little term similarity
 1,imagesofflorida,imagesofcalifornia,-0.0026,no term similarity
 2,imagesofnewyork,imagesofcalifornia,0.0175,a little term similarity
