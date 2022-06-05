@@ -3,7 +3,9 @@ import './styles.css';
 var THREE = require('three');
 import MouseMeshInteraction from '@danielblagy/three-mmi';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 import { ArrowHelper } from 'three';
+
 // import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 // import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 // import font_test from './encode_sans.json';
@@ -74,6 +76,8 @@ function fn(e) {
         tooltip[i].style.left = e.pageX + 'px';
         tooltip[i].style.top = e.pageY + 'px';
     }
+
+    
 }
 
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -138,6 +142,16 @@ filter_update.lines = 'cross_post_lines'
 document.getElementById('about-button').onclick = ()=>{openMenu('about')}
 document.getElementById('tutorial-button').onclick = ()=>{openMenu('tutorial')}
 document.getElementById('data-button').onclick = ()=>{openMenu('data')}
+
+// document.addEventListener("mousedown", function(e){
+//     // on pan
+//     if(e.button === 2){
+//         canvas.onmousemove = function(y) {          
+//             controls.reset();
+//             controls.update();
+//         }
+//     }
+// });
 
 function openMenu(menu) {
     // alert('menu');
@@ -603,11 +617,39 @@ function spawn_discs(tsne_data, cluster_data) {
                     //                                             console.log(value); alert(mesh.name)});
 
                     sub_focus(mesh.name, mesh.position.x, mesh.position.y, mesh.position.z);
+                    
+                });
+                // mmi.addHandler(cluster_data[cluster][subreddit], 'click', function(mesh) {
+                //     // alert(mesh.name);
+                //     console.log('interactable mesh has been clicked!');
+                //     // console.log(cross_post);
+                //     // alert(mesh.position.x);
+                //     // mesh.name.name
+                //     // alert(mesh.position.x + "," + mesh.position.y + "," + mesh.position.z); 
+                //     // camera.position.set(75.76, 27.12, 100);
+
+                //     camera.position.x=mesh.position.x;
+                //     camera.position.y=mesh.position.y;
+                //     camera.position.z=600;
+                //     controls.target.set(mesh.position.x,mesh.position.y,600);
+                //     // controls.update();
+                //     controls = new OrbitControls( camera, renderer.domElement );
+                //     controls.enableRotate = false;
+                //     controls.autoRotate = false;
+                //     // controls.enablePan = false;
+                //     //controls.update() must be called after any manual changes to the camera's transform
+                //     camera.position.set( 0, 20, 300 );
+                //     camera.position.x=mesh.position.x;
+                //     camera.position.y=mesh.position.y;
+                //     controls.update();
+
+                    
+                //     // sub_focus(mesh.name, mesh.position.x, mesh.position.y, mesh.position.z);
 
                 
 
                     
-                });
+                // });
             }
             
             // console.log(cluster_data[cluster][subreddit])
@@ -621,6 +663,8 @@ function spawn_discs(tsne_data, cluster_data) {
     //     scene.add(cube);
     // }
 }
+
+
 
 function sub_focus(name, x, y, z) {
     document.getElementById("search-dropdown").display = 'none';
@@ -799,6 +843,8 @@ mmi.addHandler('line', 'mouseleave', function(mesh) {
     document.getElementById('line-popup').style.display = 'none';
 })
 
+
+
 // document.addEventListener('mousemove', (event) => {
 	
 // });
@@ -817,12 +863,18 @@ scene.add( light );
 // camera and orbiting controls
 camera.position.z = 5;
 
-const controls = new OrbitControls( camera, renderer.domElement );
+var controls = new OrbitControls( camera, renderer.domElement );
 controls.enableRotate = false;
 controls.autoRotate = false;
+// controls.enablePan = false;
 //controls.update() must be called after any manual changes to the camera's transform
 camera.position.set( 0, 20, 500 );
 controls.update();
+
+// var flyControls = new FlyControls(camera, renderer.domElement);
+// flyControls.dragToLook = true;
+// flyControls.movementSpeed = 10;
+// flyControls.rollSpeed = 1;
 
 function getIcon(subreddit) {
     // this.s.getSubreddit(subreddit).icon_img.then(value=>{this.returnValues(value)});
@@ -857,7 +909,8 @@ function animate() {
     // console.log(controls.target.distanceTo( controls.object.position ));
 	// required if controls.enableDamping or controls.autoRotate are set to true
 	
-    controls.update();
+    // flyControls.update();
+    // controls.update();
 
 	renderer.render( scene, camera );
 }
