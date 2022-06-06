@@ -64,7 +64,7 @@ scene.background = new THREE.Color( 0x000000 );
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
 
-const spacing_multiplier = 300;
+const spacing_multiplier = 1500;
 
 
 var tooltip = document.querySelectorAll('#line-popup');
@@ -613,6 +613,7 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     camera.position.z = 600;
 
+                    // alert(mesh.position.x + " | " + mesh.position.y)
                     // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name)});
 
@@ -868,8 +869,11 @@ controls.enableRotate = false;
 controls.autoRotate = false;
 // controls.enablePan = false;
 //controls.update() must be called after any manual changes to the camera's transform
-camera.position.set( 0, 20, 500 );
+camera.position.set( 0, 0, 600 );
 controls.update();
+scene.translateX(-15000);
+scene.translateY(-6800);
+
 
 // var flyControls = new FlyControls(camera, renderer.domElement);
 // flyControls.dragToLook = true;
