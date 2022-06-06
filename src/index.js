@@ -140,7 +140,7 @@ filter_update.lines = 'cross_post_lines'
 // });
 
 document.getElementById('about-button').onclick = ()=>{openMenu('about')}
-
+document.getElementById('tutorial-button').onclick = ()=>{openMenu('tutorial')}
 document.getElementById('data-button').onclick = ()=>{openMenu('data')}
 
 // document.addEventListener("mousedown", function(e){
@@ -157,6 +157,7 @@ function openMenu(menu) {
     // alert('menu');
     document.getElementById('menu-content').style.display = 'block'; 
     document.getElementById('about').style.display = 'none'; 
+    document.getElementById('tutorial').style.display = 'none'; 
     document.getElementById('data').style.display = 'none'; 
 
     document.getElementById(menu).style.display = 'block'; 
