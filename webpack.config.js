@@ -20,7 +20,8 @@ module.exports = {
         hash: true,
         title: 'Reddit Connections',
         template: './src/index.html',
-        filename: 'index.html' //relative to root of the application
+        favicon: './src/logo.png',
+        filename: 'index.html' //relative to root of the application,
     })
     ],
     resolve: {
