@@ -274,11 +274,11 @@ function renderLines() {
                 const geometry = new THREE.BufferGeometry().setFromPoints( points ); // create the geometry based on the points array
 
                 if (estimates_full[filter[i]['Subreddit.j'] + filter[i]['Subreddit.i']].new_estimate > 0) {
-                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 213, 255)', linewidth: 5, transparent: true,
-                                                            opacity: 0.4 } );
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 82, 24)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } ); // used to be 'rgb(0, 213, 255)'
                 } else {
-                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 0, 0)', linewidth: 5, transparent: true,
-                                                            opacity: 0.4 } );
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 100, 100)', linewidth: 5, transparent: true,
+                                                            opacity: 0.4 } ); // used to be 'rgb(255, 0,0'
                 }
 
                 var from = new THREE.Vector3( cx, cy, 1 );
@@ -304,10 +304,10 @@ function renderLines() {
                 const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 ); // create the geometry based on the points array
                 
                 if (estimates_full[filter[i]['Subreddit.i'] + filter[i]['Subreddit.j']].new_estimate > 0) {
-                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 213, 255)', linewidth: 5, transparent: true,
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(0, 82, 24)', linewidth: 5, transparent: true,
                                                             opacity: 0.4 } );
                 } else {
-                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 0, 0)', linewidth: 5, transparent: true,
+                    material = new THREE.LineBasicMaterial( { color: 'rgb(255, 100, 100)', linewidth: 5, transparent: true,
                                                             opacity: 0.4 } );
                 }
                 
