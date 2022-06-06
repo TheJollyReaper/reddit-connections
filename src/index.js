@@ -16,7 +16,7 @@ var seedrandom = require('seedrandom');
 
 const snoowrap = require('snoowrap');
 
-const tsne = require('./data/tsne_10000.json');
+const tsne = require('./data/umap_coords.json');
 var clusters = require('./data/clusters.json');
 clusters = Object.values(clusters);
 const subreddit_attributes = require('./data/subreddit_attributes.json');
