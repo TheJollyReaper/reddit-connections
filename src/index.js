@@ -613,12 +613,15 @@ function spawn_discs(tsne_data, cluster_data) {
 
                     camera.position.z = 600;
 
+                    console.log("camera rotation: " + camera.rotation.x + ' ' + camera.rotation.y);
+
                     // alert(mesh.position.x + " | " + mesh.position.y)
                     // getIcon(mesh.name).then(value=>{document.getElementById('subreddit-img').src=(value);
                     //                                             console.log(value); alert(mesh.name)});
 
                     sub_focus(mesh.name, mesh.position.x, mesh.position.y, mesh.position.z);
-                    
+                    controls.reset();
+                    camera.position.z = 600;
                 });
                 // mmi.addHandler(cluster_data[cluster][subreddit], 'click', function(mesh) {
                 //     // alert(mesh.name);
