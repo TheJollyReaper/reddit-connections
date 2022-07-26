@@ -66,7 +66,7 @@ scene.background = new THREE.Color( 0x000000 );
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
 
-var spacing_multiplier = 9000;
+var spacing_multiplier = 18000;
 
 
 var tooltip = document.querySelectorAll('#line-popup');
@@ -909,10 +909,11 @@ controls.autoRotate = false;
 //controls.update() must be called after any manual changes to the camera's transform
 camera.position.set( 0, 0, 600 );
 controls.update();
-scene.translateX(-73453);
-scene.translateY(-51002);
+scene.translateX(-146908);
+scene.translateY(-102006);
 
 // 73453.87800000001,51002.928
+// 146907.75600000002,102005.856
 
 
 // var flyControls = new FlyControls(camera, renderer.domElement);
