@@ -35,6 +35,8 @@ const term_similarity = require('./data/term_similarity.json');
 const estimates_full = require('./data/estimates_full.json');
 
 
+var zoomed_in = false;
+
 var api = new snoowrap({
     userAgent: 'scriptapphcdecapstone',
     clientId: 'hQJu2h7ae10lGVNRSrRoOQ',
@@ -50,7 +52,7 @@ var api = new snoowrap({
 // Basic setup, need to create a scene, a camera, a background,
 // and a renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 60000 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 100000 );
 const mmi = new MouseMeshInteraction(scene, camera);
 
 // const api = new RedditApi();
@@ -64,7 +66,7 @@ scene.background = new THREE.Color( 0x000000 );
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas});
 
-const spacing_multiplier = 1500;
+var spacing_multiplier = 9000;
 
 
 var tooltip = document.querySelectorAll('#line-popup');
@@ -121,6 +123,8 @@ var filter_update = new Proxy(filters, {
 filter_update.size = 'N_distinct_posters_radius'
 filter_update.color = 'clusters'
 filter_update.lines = 'cross_post_lines'
+filter_update.zoom = camera.position.zoom
+
 
 // const loader = new FontLoader();
 // loader.load('./encode_sans.json', font => {
@@ -486,10 +490,12 @@ function spawn_discs(tsne_data, cluster_data) {
         // for white by a random number to give each cluster group a random color
 
         var disc_material = new THREE.MeshStandardMaterial();
+        var hover_color = new THREE.MeshStandardMaterial();
         
         if (filter_update.color == "clusters") {
             document.getElementById('legend').style.display = 'none';
             disc_material = new THREE.MeshStandardMaterial( { color: rng.quick() * 0xffffff , opacity: 0.75, transparent: true});
+            hover_color = new THREE.MeshStandardMaterial( { color: rng.quick() * 0xffffff});
         }
         var colors = ['rgb(253,231,37)','rgb(221,227,24)','rgb(186,222,40)','rgb(149,216,64)',
                       'rgb(117,208,84)','rgb(86,198,103)','rgb(61,188,116)','rgb(41,175,127)',
@@ -540,6 +546,7 @@ function spawn_discs(tsne_data, cluster_data) {
                         document.getElementById('color-8').style.backgroundColor = nsfw_colors[16];
                         document.getElementById('color-9').style.backgroundColor = nsfw_colors[18];
                         disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(nsfw_colors[index]), opacity: 0.75});
+              
                     } else {
                         document.getElementById('color-0').style.backgroundColor = colors[0];
                         document.getElementById('color-1').style.backgroundColor = colors[2];
@@ -552,14 +559,29 @@ function spawn_discs(tsne_data, cluster_data) {
                         document.getElementById('color-8').style.backgroundColor = colors[16];
                         document.getElementById('color-9').style.backgroundColor = colors[18];
                         disc_material = new THREE.MeshStandardMaterial({color: new THREE.Color(colors[index]), opacity: 0.75});
+             
                     }
                 }
 
                 const disc = new THREE.Mesh( disc_geom, disc_material );
 
                 disc.name = cluster_data[cluster][subreddit];
+
+                disc.normal_color = disc_material;
+               
                 // set the position of that object to the tsne coordinate units
+                // var jitter = (rng.quick() + 3) *20;
+                // if (rng.quick() > .5) {
+                //     jitter = -jitter
+                // }
+
                 disc.position.x = tsne_data[cluster_data[cluster][subreddit]]['x'] * spacing_multiplier;
+
+                // jitter = (rng.quick() + 3)*20;
+                // if (rng.quick() > .5) {
+                //     jitter = -jitter
+                // }
+
                 disc.position.y = tsne_data[cluster_data[cluster][subreddit]]['y'] * spacing_multiplier;
                 // disc.position.z = Math.floor(Math.random() * 10);
                 disc.position.z = -size;
@@ -576,12 +598,25 @@ function spawn_discs(tsne_data, cluster_data) {
                 // //Scale the object up to have an outline (as discussed in previous answer)
                 // outline.scale.multiplyScalar(1.5);
                 // scene.add(outline);
-                
+            
 
                 // Run this function whenever any bubble is clicked
                 mmi.addHandler(cluster_data[cluster][subreddit], 'click', function(mesh) {
                     // alert(mesh.name);
                     console.log('interactable mesh has been clicked!');
+
+                    // set outline circle
+
+                    // var outline_geo = new THREE.CircleGeometry( size * 20 + 10000, 32 );
+                    // var disc_material = new THREE.MeshStandardMaterial({ color: 0xffffff});
+                    // const outline = new THREE.Mesh( outline_geo, disc_material );
+
+                    // outline.position.x = mesh.position.x * spacing_multiplier;
+                    // outline.position.y = mesh.position.y * spacing_multiplier;
+                    // outline.position.z = mesh.position.z - 1;
+                    // scene.add(outline);
+
+
                     // console.log(cross_post);
                     // alert(mesh.position.x);
                     // mesh.name.name
@@ -874,8 +909,10 @@ controls.autoRotate = false;
 //controls.update() must be called after any manual changes to the camera's transform
 camera.position.set( 0, 0, 600 );
 controls.update();
-scene.translateX(-15000);
-scene.translateY(-6800);
+scene.translateX(-73453);
+scene.translateY(-51002);
+
+// 73453.87800000001,51002.928
 
 
 // var flyControls = new FlyControls(camera, renderer.domElement);
@@ -918,7 +955,20 @@ function animate() {
 	
     // flyControls.update();
     // controls.update();
+    console.log(camera.position.z);
+ 
+    // filter_update.zoom = camera.position.z;
+    // if (camera.position.z <= 600 && !zoomed_in) {
+    //     zoomed_in = !zoomed_in;
+    //     filter_update.zoom = camera.position.z;
+    //     spacing_multiplier = 8000;
+    // }
 
+    // if (camera.position.z > 600 && zoomed_in) {
+    //     zoomed_in = !zoomed_in;
+    //     filter_update.zoom = camera.position.z;
+    //     spacing_multiplier = 9000;
+    // }
 	renderer.render( scene, camera );
 }
 
